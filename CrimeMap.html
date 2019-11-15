@@ -3,6 +3,8 @@
 
 <head>
 
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -11,8 +13,6 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
     <script src="https://unpkg.com/h3-js"></script>
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script src="./data.js"></script>
 
     <style>
         #mapid {
@@ -25,22 +25,13 @@
 <body>
     <div id="mapid"></div>
     <script>
-
-        var map = L.map("mapid").setView([30.290524, -97.743044], 11);
+        var map = L.map("mapid").setView([30.287884, -97.725073], 10);
 
         //    initilizing point and the zoom level
         L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=Sb62WB43wVx8C5IwCKAi', {
             attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
         }).addTo(map);
 
-        function addDataToMap(data, map) {
-            var dataLayer = L.geoJson(data);
-            dataLayer.addTo(map);
-        }
-
-        $.getJSON("Boundaries_ Zip Code Tabulation Areas, 2017.geojson", function (data) {
-            addDataToMap(data, map);
-        });
 
         var popup = L.popup();
 
@@ -52,14 +43,40 @@
         };
 
         map.on("click", onMapClick);
-
-        d3.csv("processed.csv", (d) => {
+    </script>
+    <script src="./data_process.js"></script>
+    <script>
+        d3.csv("processed.csv", function (d) {
             var data = Data();
             data.setRawData(d);
             window.data = data;
+            var by_zip_data = data.getAllZipData();
+
+
+
+            // L.geoJson(d,{style:function(feature){
+            //     for (var i =0 ;  i<by_zip_data.length;i++){
+            //     if (feature.properties.geoid10 == by _zip_data[i].zip.toString()){
+            //         return {color: 'rgb(11,11,'+(by_zip_data[i].safetyIndex * 0.01).toString() +")"}
+            //     }
+            // }
+            // }}).addTo(map);
+            // }
+
+            $.getJSON("Boundaries_Zip.geojson", function (data) {
+                var dataLayer = L.geoJson(data, {
+                    style: function (feature) {
+                        // feature.properties.geoid10
+                    }
+                });
+                dataLayer.addTo(map);
+            });
+
+
+
+
         });
     </script>
-
 </body>
 
 </html>

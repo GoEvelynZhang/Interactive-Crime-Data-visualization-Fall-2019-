@@ -1,0 +1,116 @@
+function Data() {
+    var rawData;
+    var average = (avg, d, _, {
+        length
+    }) => (avg += d["Processing Time"] / length);
+
+    const ZIP = [78753, 78741, 78704, 78758, 78745, 78723, 78701, 78744, 78702,
+        78748, 78759, 78705, 78757, 78752, 78751, 78749, 78746, 78703,
+        78731, 78724, 78727, 78721, 78729, 78754, 78750, 78613, 78756,
+        78722, 78735, 78747, 78617, 78717, 78726, 78739, 78719, 78660,
+        78736, 78730, 78725, 78742, 78653, 78652, 78728, 78737, 78712,
+        78732, 78733
+    ];
+
+    const MONTH = {
+        'Jan': 1,
+        'Feb': 2,
+        'Mar': 3,
+        'Apr': 4,
+        'May': 5,
+        'Jun': 6,
+        'Jul': 7,
+        'Aug': 8,
+        'Sep': 9,
+        'Oct': 10,
+        'Nov': 11,
+        'Dec': 12,
+    };
+
+    const WEEK = {
+        'Mon': 0,
+        'Tue': 1,
+        'Wed': 2,
+        'Thu': 3,
+        'Fri': 4,
+        'Sat': 5,
+        'Sun': 6,
+    };
+
+    const CRIME_WEIGHT = {
+        'Agg Assault': 4,
+        'Auto Theft': 3,
+        'Burglary': 2,
+        'Murder': 6,
+        'Robbery': 5,
+        'Theft': 1
+    };
+    
+    const CRIME = Object.keys(CRIME_WEIGHT);
+
+    var safetyIndex = function (array) {
+        var reducer = function (sum, datum) {
+            sum += CRIME_WEIGHT[datum["Highest NIBRS/UCR Offense Description"]];
+            return sum;
+        };
+        return array.reduce(reducer, 0);
+    };
+
+    var getZipArray = (zip) => rawData.filter((item) =>  item["GO Location Zip"] == zip);
+    var getClearnceArray = (array) => array.filter((item) => item["Clearance Status"] != "N");
+
+    var processedData = {
+        getCrime: () => CRIME,
+        getZip: () => ZIP,
+        getMonth: () => MONTH,
+        setRawData: function (data) {
+            rawData = data;
+            return processedData;
+        },
+        getZipArray: () => getZipArray,
+        getClearnceArray: () => getClearnceArray,
+        getWeekData: function(zip=null) {
+            var arr = rawData;
+            if (zip != null) arr = getZipArray(zip);
+            var weekdays = [...Array(7).keys()];
+            return Array.from(weekdays, x => arr.filter(d => d.weekday == x).length);
+        }, 
+        getMonthData: function(zip=null) {
+            var arr = rawData;
+            if (zip != null) arr = getZipArray(zip);
+            var months = Array.from([...Array(12).keys()], x => x+1);
+            return Array.from(months, x => arr.filter(d => d.month == x).length);
+        },
+        getCrimeData: function(zip=null) {
+            var arr = rawData;
+            if (zip != null) arr = getZipArray(zip);
+            return Array.from(CRIME, x => arr.filter(d => d["Highest NIBRS/UCR Offense Description"]==x).length).reduce((acc, elem, i) => {
+                acc[CRIME[i]] = elem;
+                return acc;
+            }, {});
+        },
+        getAllSafetyIdx: () => Array.from(ZIP, x => safetyIndex(getZipArray(x))).reduce((acc, elem, i) => {
+            acc[ZIP[i]] = elem;
+            return acc;
+        }, {}),
+        getZipData: function (zip) {
+            var zip_array = getZipArray(zip);
+            var clearance = getClearnceArray(zip_array);
+            return {
+                zip: zip,
+                numberOfCases: zip_array.length,
+                clearanceRate: clearance.length / zip_array.length,
+                clearanceTime: clearance.reduce(average, 0),
+                safetyIndex: safetyIndex(zip_array)
+            };
+        },
+        getAllZipData: function () {
+            return ZIP.map(this.getZipData);
+        },
+        getRawData: function () {
+            return rawData;
+        }
+    };
+
+    return processedData;
+}
