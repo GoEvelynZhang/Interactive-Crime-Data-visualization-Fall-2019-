@@ -2,19 +2,20 @@
 <html>
 
 <head>
-        
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
-<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-       
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
     <script src="https://unpkg.com/h3-js"></script>
-  
-   
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="./data.js"></script>
+
     <style>
-         #mapid {
+        #mapid {
             height: 800px;
             width: 800px;
         }
@@ -24,7 +25,6 @@
 <body>
     <div id="mapid"></div>
     <script>
-       
 
         var map = L.map("mapid").setView([30.290524, -97.743044], 11);
 
@@ -34,25 +34,32 @@
         }).addTo(map);
 
         function addDataToMap(data, map) {
-    var dataLayer = L.geoJson(data);
-    dataLayer.addTo(map);
-}
+            var dataLayer = L.geoJson(data);
+            dataLayer.addTo(map);
+        }
 
-$.getJSON("Council Districts Fill.geojson", function(data) { addDataToMap(data, map); });
+        $.getJSON("Boundaries_ Zip Code Tabulation Areas, 2017.geojson", function (data) {
+            addDataToMap(data, map);
+        });
 
-var popup = L.popup();
+        var popup = L.popup();
 
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
-};
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+        };
 
-map.on("click", onMapClick);
+        map.on("click", onMapClick);
 
-     
+        d3.csv("processed.csv", (d) => {
+            var data = Data();
+            data.setRawData(d);
+            window.data = data;
+        });
     </script>
 
 </body>
+
 </html>
