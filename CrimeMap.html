@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+       
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+    <script src="https://unpkg.com/h3-js"></script>
+  
+   
+    <style>
+         #mapid {
+            height: 800px;
+            width: 800px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mapid"></div>
+    <script>
+       
+
+        var map = L.map("mapid").setView([30.290524, -97.743044], 11);
+
+        //    initilizing point and the zoom level
+        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=Sb62WB43wVx8C5IwCKAi', {
+            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+        }).addTo(map);
+
+        function addDataToMap(data, map) {
+    var dataLayer = L.geoJson(data);
+    dataLayer.addTo(map);
+}
+
+$.getJSON("Council Districts Fill.geojson", function(data) { addDataToMap(data, map); });
+
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+};
+
+map.on("click", onMapClick);
+
+     
+    </script>
+
+</body>
+</html>
