@@ -2,42 +2,14 @@
 <html>
 
 <head>
-    <script type="text/javascript" src="data_process.js"></script>
     <!-- <script src = "Boundaries_Zip.geojson"></script> -->
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+    <script type="text/javascript" src="data_process.js"></script>
+    <script type="text/javascript" src="barchart_closure.js"></script>
+    <script type="text/javascript" src="linechart_closure.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
-    <style>
-        #category_graph,
-        #main_graph,
-        #time_series_graph {
-            display: inline-block;
-
-        }
-
-        #category_graph,
-        #time_series_graph {
-            transform: translate(16%, -95px);
-
-        }
-
-        #main_graph {
-            transform: translate(10%, 0);
-        }
-
-
-        div {
-            border-width: 1px;
-            border-style: solid;
-        }
-
-        h1 {
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            position: relative;
-            text-align: center;
-
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -49,8 +21,12 @@
     </div>
 
     <script>
-        var main_height = 500;
-        var main_width = 500;
+        // Main view dimension {MARKER}
+        // var main_height = 500;
+        // var main_width = 500;
+        var main_height = 800;
+        var main_width = 800;
+
         var main_margin = {
             "top": 20,
             "bottom": 20,
@@ -58,8 +34,12 @@
             "right": 20
         };
 
-        var sec_height = 300;
-        var sec_width = 300;
+        // Sub view dimension
+        // var sec_height = 300;
+        // var sec_width = 300;
+        var sec_height = 400;
+        var sec_width = 400;
+
         var sec_margin = {
             "top": 12,
             "bottom": 12,
@@ -74,8 +54,6 @@
         var main = d3.select("#main_graph").append("svg")
             .attr("width", main_width + main_margin.left + main_margin.right)
             .attr("height", main_height + main_margin.top + main_margin.bottom);
-
-
 
         var right_graph = d3.select("#time_series_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
@@ -104,71 +82,231 @@
             // console.log(key_collection);
 
             d3.json("Boundaries_Zip.geojson", function (json) {
-                // bind each zip section with the safty index
-                for (var i = 0; i < key_collection.length; i++) {
-                    var zip_name = key_collection[i];
-                    var zip_index = parseFloat(dataset[zip_name]);
-                    for (var j = 0; j < json.features.length; j++) {
-                        var json_zip = json.features[j].properties.geoid10;
-                        if (zip_name == json_zip) {
-                            json.features[j].properties.value = zip_index;
-                            // console.log(zip_index);
-                            break
-                        }
-                    }
-
-
-                }
-
-
-
-
-
-                var w = (main_width + main_margin.left + main_margin.right) / 2;
-                var h = (main_height + main_margin.top + main_margin.bottom) / 2;
-
-                var projection = projection = d3.geoMercator()
-                    .center([-97.725073, 30.287884])
-                    .fitExtent([
-                        [0, 0],
-                        [w * 1.7, h * 1.7]
-                    ], json)
-                    .translate([w, h]);
-                // var projection = d3.geoAlbersUsa().translate([main_width/2, main_height/2]).scale([500]);
-                var path = d3.geoPath().projection(projection);
-
-                // console.log(json)
-                //Bind data and create one path per GeoJSON feature
-                main.selectAll("path")
-                    .data(json.features)
-                    .enter()
-                    .append("path")
-                    .attr("d", path)
-                    .attr("stroke", "black")
-                    .attr("stoke-width", "1")
-                    .style("fill", function (d) {
-                        // get the binded index value
-                        var value = d.properties.value;
-                        if (value) {
-                            return color(value);
-                        } else {
-                            return "#ccc";
-                        }
-                    })
-                    .style("fill-opacity", 0.7)
-                    .on("mouseover", function (d, i) {
-                        d3.select(this).style('fill-opacity', 1);
-                    })
-                    .on("mouseout", function (d, i) {
-                        d3.select(this)
-                            .style('fill-opacity', 0.7);
-                    });
-
+                drawMain(json, key_collection, dataset);
+                draw(data);
             });
-        })
+        });
+
+        function drawMain(json, key_collection, dataset) {
+            // bind each zip section with the safty index
+            for (var i = 0; i < key_collection.length; i++) {
+                var zip_name = key_collection[i];
+                var zip_index = parseFloat(dataset[zip_name]);
+                for (var j = 0; j < json.features.length; j++) {
+                    var json_zip = json.features[j].properties.geoid10;
+                    if (zip_name == json_zip) {
+                        json.features[j].properties.value = zip_index;
+                        // console.log(zip_index);
+                        break
+                    }
+                }
+            }
+
+            var w = (main_width + main_margin.left + main_margin.right) / 2;
+            var h = (main_height + main_margin.top + main_margin.bottom) / 2;
+
+            var mainProjection = d3.geoMercator()
+                .center([-97.725073, 30.287884])
+                .fitExtent([
+                    [0, 0],
+                    [w * 1.7, h * 1.7]
+                ], json)
+                .translate([w, h]);
+            // var mainProjection = d3.geoAlbersUsa().translate([main_width/2, main_height/2]).scale([500]);
+            var mainPath = d3.geoPath().projection(mainProjection);
+
+            // console.log(json)
+            //Bind data and create one path per GeoJSON feature
+            main.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", mainPath)
+                .attr("stroke", "black")
+                .attr("stoke-width", "1")
+                .style("fill", function (d) {
+                    // get the binded index value
+                    var value = d.properties.value;
+                    if (value) {
+                        return color(value);
+                    } else {
+                        return "#ccc";
+                    }
+                })
+                .style("fill-opacity", 0.7)
+                .on("mouseover", function (d, i) {
+                    d3.select(this).style('fill-opacity', 1);
+                })
+                .on("mouseout", function (d, i) {
+                    d3.select(this)
+                        .style('fill-opacity', 0.7);
+                });
+        }
+
+        // Global zip selection
+        var zip_selection = 512;
+
+        // draw the main map in the center
+        var projection = d3.geoAlbersUsa()
+            .translate([main_width / 2, main_height / 2])
+            .scale([500]);
+
+        // define left view
+        function draw_left_view(data) {
+            var allCrime = data.getAllCrimeDataByCat();
+            // Set up Xscale
+            var xScale = d3.scaleBand()
+                .rangeRound([sec_margin.left, sec_width - sec_margin.right], .1)
+                .domain(data.getCrime());
+            // Set up Yscale
+            var yScale = d3.scaleLinear()
+                .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
+            var updateYScale = (yScale, zip = 512) => {
+                yScale.domain([0, d3.max(Object.values(data.getCrimeDataByZip(zip))) *
+                    1.25
+                ]); // the default value is the while map
+            }
+            updateYScale(yScale);
+            // Define xAxis
+            var xAxis = d3.axisBottom(xScale).tickSizeOuter(0).tickPadding(5);
+            // Define yAxis
+            var yAxis = d3.axisLeft(yScale)
+                .tickFormat(d3.format(".2s"));
+            // Draw xAxis
+            left_graph.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
+                .call(xAxis);
+            // Draw yAxis
+            left_graph.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + (sec_margin.left + 10) + "," + 0 + ")")
+                .call(yAxis);
+            // Define bars
+            var bars = barChart()
+                .setHeight(sec_height)
+                .setScale(xScale, yScale)
+                .setZip(512); // the default value is the while map
+            //Draw bars
+            left_graph.datum(allCrime)
+                .call(bars);
+
+            return {
+                svg: left_graph,
+                data: allCrime,
+                update: updateYScale,
+                xScale: xScale,
+                yScale: yScale,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                mark: bars
+            };
+        }
+
+        // define right view
+        function draw_right_view(data) {
+            var allCrime = data.getAllMonthDataByMonth();
+            // Set up Xscale
+            var xScale = d3.scaleBand()
+                .rangeRound([sec_margin.left, sec_width - sec_margin.right], .1)
+                .domain(Object.keys(data.getMonth()));
+            // Set up Yscale
+            var yScale = d3.scaleLinear()
+                .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
+            var updateYScale = (yScale, zip = 512) => {
+                yScale.domain([d3.min(Object.values(data.getMonthDataByZip(zip))), d3.max(Object.values(data
+                    .getMonthDataByZip(zip))) * 1.10]) // the default value is the while map
+            }
+            updateYScale(yScale);
+            // Define xAxis
+            var xAxis = d3.axisBottom(xScale).tickSizeOuter(0).tickPadding(5);
+            // Define yAxis
+            var yAxis = d3.axisLeft(yScale)
+                .tickFormat(d3.format("d"));
+            // Draw xAxis
+            right_graph.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
+                .call(xAxis);
+            // Draw yAxis
+            right_graph.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + (sec_margin.left + 20) + "," + 0 + ")")
+                .call(yAxis);
+            // Define line
+            var line = lineChart()
+                .setHeight(sec_height)
+                .setScale(xScale, yScale)
+                .setZip(512); // the default value is the while map
+            //Draw line
+            right_graph.datum(allCrime)
+                .call(line);
+
+            return {
+                svg: right_graph,
+                data: allCrime,
+                update: updateYScale,
+                xScale: xScale,
+                yScale: yScale,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                mark: line
+            };
+        }
+
+        function updateView(view, zip) {
+            view.update(view.yScale, zip);
+            view.yAxis.scale(view.yScale);
+            view.svg.select(".y.axis").transition(1000).call(view.yAxis);
+            view.mark.setZip(zip);
+            view.mark.setScale(view.xScale, view.yScale);
+            view.mark.update(view.svg);
+        };
+
+        // draw function
+        function draw(data) {
+            // This is for debugging
+            window.data = data;
+            window.d3 = d3;
+
+            function changeAttribute() {
+                var selection = this.value;
+                console.log(selection);
+
+                updateView(left_view, selection);
+                updateView(right_view, selection);
+            };
+
+            var left_view = draw_left_view(data);
+            var right_view = draw_right_view(data);
+
+            var selection = d3.select("#main_graph")
+                .append("div")
+                .attr("id", "selection");
+
+            var span = selection.append('span')
+                .text('Select an attribute ');
+
+            var orderSelect = selection.append('select')
+                .attr('id', 'orderSelect')
+                .on('change', changeAttribute);
+
+            selection.select("#orderSelect")
+                .append("option")
+                .attr("value", 512)
+                .text("All");
+
+            orderSelect.selectAll('option')
+                .data(data.getZip())
+                .enter()
+                .append('option')
+                .attr('value', function (d) {
+                    return d;
+                })
+                .text(function (d) {
+                    return d;
+                });
+        }
     </script>
-
 </body>
-
-
 </html>
