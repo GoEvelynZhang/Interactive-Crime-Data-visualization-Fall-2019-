@@ -38,7 +38,7 @@
             "right": 12
         };
         // Global zip selection
-        var zip_selection = null;
+        var zip_selection = 512;
         // Append main view
         var main = d3.select("#main_graph").append("svg")
             .attr("width", main_width + main_margin.left + main_margin.right)
@@ -66,7 +66,7 @@
             // Set up Yscale
             var yScale = d3.scaleLinear()
                 .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
-            var updateYScale = (yScale, zip=null) => {
+            var updateYScale = (yScale, zip=512) => {
                 yScale.domain([0, d3.max(Object.values(data.getCrimeDataByZip(zip))) *
                 1.25]); // the default value is the while map
             }
@@ -90,7 +90,7 @@
             var bars = barChart()
                 .setHeight(sec_height)
                 .setScale(xScale, yScale)
-                .setZip(null); // the default value is the while map
+                .setZip(512); // the default value is the while map
             //Draw bars
             left_graph.datum(allCrime)
                 .call(bars);
@@ -117,7 +117,7 @@
             // Set up Yscale
             var yScale = d3.scaleLinear()
                 .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
-            var updateYScale = (yScale, zip=null) => {
+            var updateYScale = (yScale, zip=512) => {
                 yScale.domain([d3.min(Object.values(data.getMonthDataByZip(zip))), d3.max(Object.values(data
                     .getMonthDataByZip(zip))) * 1.10]) // the default value is the while map
                 }
@@ -141,7 +141,7 @@
             var line = lineChart()
                 .setHeight(sec_height)
                 .setScale(xScale, yScale)
-                .setZip(null); // the default value is the while map
+                .setZip(512); // the default value is the while map
             //Draw line
             right_graph.datum(allCrime)
                 .call(line);
@@ -195,8 +195,14 @@
 
             var orderSelect = selection.append('select')
                 .attr('id', 'orderSelect')
-                .on('change', changeAttribute)
-                .selectAll('option')
+                .on('change', changeAttribute);
+            
+            selection.select("#orderSelect")
+              .append("option")
+              .attr("value", 512)
+              .text("All");
+
+            orderSelect.selectAll('option')
                 .data(data.getZip()) 
                 .enter()
                 .append('option')
