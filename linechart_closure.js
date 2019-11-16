@@ -20,11 +20,13 @@ function lineChart() {
                .data(data)
                .enter()
                .append("circle")
-               .attr("class", "dot")
-               .attr("id", d => d.month)
-               .attr("cx", d => xSl(d.month)+xSl.bandwidth()+5)
-               .attr("cy", d => ySl(d[zip]))
-               .attr("r", 3);
+                .attr("class", "dot")
+                .attr("id", d => d.month)
+                .attr("cx", d => xSl(d.month)+xSl.bandwidth()+5)
+                .attr("cy", d => ySl(d[zip]))
+                .attr("r", 3)
+                .append("title")
+                  .text(d => d.month + ': ' + d[zip]);
         });
     }
 
@@ -48,6 +50,8 @@ function lineChart() {
         var dots = view.selectAll("circle");
         dots.transition(1000)
           .attr("cy", d => ySl(d[zip]));
+        dots.select("title")
+          .text(d => d.month + ': ' + d[zip]);
         var line = view.selectAll(".line");
         line.transition(1000)
           .attr("d", d3.line()

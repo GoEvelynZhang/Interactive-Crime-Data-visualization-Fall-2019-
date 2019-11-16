@@ -35,7 +35,9 @@ function barChart() {
                 .attr("width", xSl.bandwidth()*3/4)
                 .attr("height", function (d) {
                     return ht - ySl(d[zip]);
-                });
+                })
+                .append("title")
+                  .text(d => d[zip]);
         });
     }
 
@@ -64,6 +66,8 @@ function barChart() {
             .attr("height", function (d) {
                 return ht - ySl(d[zip]);
             });
+        rects.select("title")
+            .text(d => d[zip]);
     };
 
     return chart;
