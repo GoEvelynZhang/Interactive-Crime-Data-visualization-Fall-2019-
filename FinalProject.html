@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- <script src = "Boundaries_Zip.geojson"></script> -->
+        <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+        <style>
+            #category_graph,#main_graph,#time_series_graph{
+                display: inline-block;
+                
+            }
+            #category_graph,#time_series_graph{
+                transform: translate(16%,-95px);
+
+            }
+            #main_graph{
+                transform:translate(10%,0);
+            }
+            
+
+            div{
+                border-width: 1px;
+                border-style:solid;
+            }
+            h1{
+                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+                position: relative;
+                text-align: center;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Austin Criminal Analytical Map</h1>
+        <div class = "graph">
+            <div id = "category_graph"></div>
+            <div id = "main_graph"></div> 
+            <div id = "time_series_graph"></div>
+        </div>
+
+        <script>
+            var main_height = 500;
+            var main_width = 500;
+            var main_margin = {"top":20, "bottom":20, "left":20,"right":20};
+            
+            var sec_height = 300;
+            var sec_width = 300;
+            var sec_margin = {"top":12, "bottom":12, "left":20,"right":12};
+
+            var left_graph = d3.select("#category_graph").append("svg")
+                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
+                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
+                        
+            var main = d3.select("#main_graph").append("svg")
+                        .attr("width",main_width+main_margin.left +main_margin.right)
+                        .attr("height",main_height+main_margin.top + main_margin.bottom);
+                        
+         
+
+            var right_graph = d3.select("#time_series_graph").append("svg")
+                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
+                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
+
+
+            // draw the main map in the center
+            var projection = d3.geoAlbersUsa() 
+                                .translate([main_width/2, main_height/2])
+                                .scale([500]);
+
+
+
+        </script>
+
+    </body>
+
+
+</html>
