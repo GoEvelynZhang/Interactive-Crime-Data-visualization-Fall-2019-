@@ -1,76 +1,174 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- <script src = "Boundaries_Zip.geojson"></script> -->
-        <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
-        <style>
-            #category_graph,#main_graph,#time_series_graph{
-                display: inline-block;
-                
+
+<head>
+    <script type="text/javascript" src="data_process.js"></script>
+    <!-- <script src = "Boundaries_Zip.geojson"></script> -->
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <style>
+        #category_graph,
+        #main_graph,
+        #time_series_graph {
+            display: inline-block;
+
+        }
+
+        #category_graph,
+        #time_series_graph {
+            transform: translate(16%, -95px);
+
+        }
+
+        #main_graph {
+            transform: translate(10%, 0);
+        }
+
+
+        div {
+            border-width: 1px;
+            border-style: solid;
+        }
+
+        h1 {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            position: relative;
+            text-align: center;
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Austin Criminal Analytical Map</h1>
+    <div class="graph">
+        <div id="category_graph"></div>
+        <div id="main_graph"></div>
+        <div id="time_series_graph"></div>
+    </div>
+
+    <script>
+        var main_height = 500;
+        var main_width = 500;
+        var main_margin = {
+            "top": 20,
+            "bottom": 20,
+            "left": 20,
+            "right": 20
+        };
+
+        var sec_height = 300;
+        var sec_width = 300;
+        var sec_margin = {
+            "top": 12,
+            "bottom": 12,
+            "left": 20,
+            "right": 12
+        };
+
+        var left_graph = d3.select("#category_graph").append("svg")
+            .attr("width", sec_width + sec_margin.left + sec_margin.right)
+            .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+
+        var main = d3.select("#main_graph").append("svg")
+            .attr("width", main_width + main_margin.left + main_margin.right)
+            .attr("height", main_height + main_margin.top + main_margin.bottom);
+
+
+
+        var right_graph = d3.select("#time_series_graph").append("svg")
+            .attr("width", sec_width + sec_margin.left + sec_margin.right)
+            .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+
+        var color = d3.scaleQuantize()
+            .range(["#007f00", "#99ff99", "#00b200", "#ccffcc", "#006100", "#009700", "#BEA6A0", "#56423D",
+                "rgb(255, 100, 0)", "rgb(255, 50, 0)", "#FF0000"
+            ]);
+        // draw the main map in the center
+        d3.csv("processed_data.csv", function (d) {
+
+            var data = Data();
+            data.setRawData(d);
+            var dataset = data.getAllSafetyIdx();
+            // console.log(dataset);
+            var key_collection = Object.keys(dataset);
+            var value_collection = [];
+            for (var l = 0; l < key_collection.length; l++) {
+                value_collection.push(parseFloat(dataset[key_collection[l]]));
             }
-            #category_graph,#time_series_graph{
-                transform: translate(16%,-95px);
-
-            }
-            #main_graph{
-                transform:translate(10%,0);
-            }
-            
-
-            div{
-                border-width: 1px;
-                border-style:solid;
-            }
-            h1{
-                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                position: relative;
-                text-align: center;
-                
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Austin Criminal Analytical Map</h1>
-        <div class = "graph">
-            <div id = "category_graph"></div>
-            <div id = "main_graph"></div> 
-            <div id = "time_series_graph"></div>
-        </div>
-
-        <script>
-            var main_height = 500;
-            var main_width = 500;
-            var main_margin = {"top":20, "bottom":20, "left":20,"right":20};
-            
-            var sec_height = 300;
-            var sec_width = 300;
-            var sec_margin = {"top":12, "bottom":12, "left":20,"right":12};
-
-            var left_graph = d3.select("#category_graph").append("svg")
-                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
-                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
-                        
-            var main = d3.select("#main_graph").append("svg")
-                        .attr("width",main_width+main_margin.left +main_margin.right)
-                        .attr("height",main_height+main_margin.top + main_margin.bottom);
-                        
-         
-
-            var right_graph = d3.select("#time_series_graph").append("svg")
-                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
-                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
 
 
-            // draw the main map in the center
-            var projection = d3.geoAlbersUsa() 
-                                .translate([main_width/2, main_height/2])
-                                .scale([500]);
+            color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
+
+            // console.log(key_collection);
+
+            d3.json("Boundaries_Zip.geojson", function (json) {
+                // bind each zip section with the safty index
+                for (var i = 0; i < key_collection.length; i++) {
+                    var zip_name = key_collection[i];
+                    var zip_index = parseFloat(dataset[zip_name]);
+                    for (var j = 0; j < json.features.length; j++) {
+                        var json_zip = json.features[j].properties.geoid10;
+                        if (zip_name == json_zip) {
+                            json.features[j].properties.value = zip_index;
+                            // console.log(zip_index);
+                            break
+                        }
+                    }
+
+
+                }
 
 
 
-        </script>
 
-    </body>
+
+                var w = (main_width + main_margin.left + main_margin.right) / 2;
+                var h = (main_height + main_margin.top + main_margin.bottom) / 2;
+
+                var projection = projection = d3.geoMercator()
+                    .center([-97.725073, 30.287884])
+                    .fitExtent([
+                        [0, 0],
+                        [w * 1.7, h * 1.7]
+                    ], json)
+                    .translate([w, h]);
+                // var projection = d3.geoAlbersUsa().translate([main_width/2, main_height/2]).scale([500]);
+                var path = d3.geoPath().projection(projection);
+
+                // console.log(json)
+                //Bind data and create one path per GeoJSON feature
+                main.selectAll("path")
+                    .data(json.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .attr("stroke", "black")
+                    .attr("stoke-width", "1")
+                    .style("fill", function (d) {
+                        // get the binded index value
+                        var value = d.properties.value;
+                        if (value) {
+                            return color(value);
+                        } else {
+                            return "#ccc";
+                        }
+                    })
+                    .style("fill-opacity", 0.7)
+                    .on("mouseover", function (d, i) {
+                        d3.select(this).style('fill-opacity', 1);
+                    })
+                    .on("mouseout", function (d, i) {
+                        d3.select(this)
+                            .style('fill-opacity', 0.7);
+                    });
+
+            });
+        })
+    </script>
+
+</body>
 
 
 </html>
