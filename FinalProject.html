@@ -1,76 +1,218 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- <script src = "Boundaries_Zip.geojson"></script> -->
-        <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
-        <style>
-            #category_graph,#main_graph,#time_series_graph{
-                display: inline-block;
-                
+
+<head>
+    <!-- <script src = "Boundaries_Zip.geojson"></script> -->
+    <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+    <script type="text/javascript" src="data_process.js"></script>
+    <script type="text/javascript" src="barchart_closure.js"></script>
+    <script type="text/javascript" src="linechart_closure.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Austin Criminal Analytical Map</h1>
+    <div class="graph">
+        <div id="category_graph"></div>
+        <div id="main_graph"></div>
+        <div id="time_series_graph"></div>
+    </div>
+
+    <script>
+        // Main view dimension
+        var main_height = 800;
+        var main_width = 800;
+        var main_margin = {
+            "top": 20,
+            "bottom": 20,
+            "left": 20,
+            "right": 20
+        };
+        // Sub view dimension
+        var sec_height = 400;
+        var sec_width = 400;
+        var sec_margin = {
+            "top": 12,
+            "bottom": 12,
+            "left": 20,
+            "right": 12
+        };
+        // Global zip selection
+        var zip_selection = null;
+        // Append main view
+        var main = d3.select("#main_graph").append("svg")
+            .attr("width", main_width + main_margin.left + main_margin.right)
+            .attr("height", main_height + main_margin.top + main_margin.bottom);
+        // Append right sub view
+        var right_graph = d3.select("#time_series_graph").append("svg")
+            .attr("width", sec_width + sec_margin.left + sec_margin.right)
+            .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+        // Append left sub view
+        var left_graph = d3.select("#category_graph").append("svg")
+            .attr("width", sec_width + sec_margin.left + sec_margin.right)
+            .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+        // draw the main map in the center
+        var projection = d3.geoAlbersUsa()
+            .translate([main_width / 2, main_height / 2])
+            .scale([500]);
+
+        // define left view
+        function draw_left_view(data) {
+            var allCrime = data.getAllCrimeDataByCat();
+            // Set up Xscale
+            var xScale = d3.scaleBand()
+                .rangeRound([sec_margin.left, sec_width - sec_margin.right], .1)
+                .domain(data.getCrime());
+            // Set up Yscale
+            var yScale = d3.scaleLinear()
+                .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
+            var updateYScale = (yScale, zip=null) => {
+                yScale.domain([0, d3.max(Object.values(data.getCrimeDataByZip(zip))) *
+                1.25]); // the default value is the while map
             }
-            #category_graph,#time_series_graph{
-                transform: translate(16%,-95px);
+            updateYScale(yScale);
+            // Define xAxis
+            var xAxis = d3.axisBottom(xScale).tickSizeOuter(0).tickPadding(5);
+            // Define yAxis
+            var yAxis = d3.axisLeft(yScale)
+                .tickFormat(d3.format(".2s"));
+            // Draw xAxis
+            left_graph.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
+                .call(xAxis);
+            // Draw yAxis
+            left_graph.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + (sec_margin.left + 10) + "," + sec_margin.top + ")")
+                .call(yAxis);
+            // Define bars
+            var bars = barChart()
+                .setHeight(sec_height)
+                .setScale(xScale, yScale)
+                .setZip(null); // the default value is the while map
+            //Draw bars
+            left_graph.datum(allCrime)
+                .call(bars);
 
-            }
-            #main_graph{
-                transform:translate(10%,0);
-            }
-            
+            return {
+                svg: left_graph,
+                data: allCrime,
+                update: updateYScale,
+                xScale: xScale,
+                yScale: yScale,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                mark: bars
+            };
+        }
 
-            div{
-                border-width: 1px;
-                border-style:solid;
-            }
-            h1{
-                font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                position: relative;
-                text-align: center;
-                
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Austin Criminal Analytical Map</h1>
-        <div class = "graph">
-            <div id = "category_graph"></div>
-            <div id = "main_graph"></div> 
-            <div id = "time_series_graph"></div>
-        </div>
+        // define right view
+        function draw_right_view(data) {
+            var allCrime = data.getAllMonthDataByMonth();
+            // Set up Xscale
+            var xScale = d3.scaleBand()
+                .rangeRound([sec_margin.left, sec_width - sec_margin.right], .1)
+                .domain(Object.keys(data.getMonth()));
+            // Set up Yscale
+            var yScale = d3.scaleLinear()
+                .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
+            var updateYScale = (yScale, zip=null) => {
+                yScale.domain([d3.min(Object.values(data.getMonthDataByZip(zip))), d3.max(Object.values(data
+                    .getMonthDataByZip(zip))) * 1.10]) // the default value is the while map
+                }
+            updateYScale(yScale);
+            // Define xAxis
+            var xAxis = d3.axisBottom(xScale).tickSizeOuter(0).tickPadding(5);
+            // Define yAxis
+            var yAxis = d3.axisLeft(yScale)
+                .tickFormat(d3.format("d"));
+            // Draw xAxis
+            right_graph.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
+                .call(xAxis);
+            // Draw yAxis
+            right_graph.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(" + (sec_margin.left + 20) + "," + 0 + ")")
+                .call(yAxis);
+            // Define line
+            var line = lineChart()
+                .setHeight(sec_height)
+                .setScale(xScale, yScale)
+                .setZip(null); // the default value is the while map
+            //Draw line
+            right_graph.datum(allCrime)
+                .call(line);
 
-        <script>
-            var main_height = 500;
-            var main_width = 500;
-            var main_margin = {"top":20, "bottom":20, "left":20,"right":20};
-            
-            var sec_height = 300;
-            var sec_width = 300;
-            var sec_margin = {"top":12, "bottom":12, "left":20,"right":12};
+            return {
+                svg: right_graph,
+                data: allCrime,
+                update: updateYScale,
+                xScale: xScale,
+                yScale: yScale,
+                xAxis: xAxis,
+                yAxis: yAxis,
+                mark: line
+            };
+        }
 
-            var left_graph = d3.select("#category_graph").append("svg")
-                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
-                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
-                        
-            var main = d3.select("#main_graph").append("svg")
-                        .attr("width",main_width+main_margin.left +main_margin.right)
-                        .attr("height",main_height+main_margin.top + main_margin.bottom);
-                        
-         
+        function updateView(view, zip) {
+            view.update(view.yScale, zip);
+            view.yAxis.scale(view.yScale);
+            view.svg.select(".y.axis").transition(1000).call(view.yAxis);
+            view.mark.setZip(zip);
+            view.mark.setScale(view.xScale, view.yScale);
+            view.mark.update(view.svg);
+        };
 
-            var right_graph = d3.select("#time_series_graph").append("svg")
-                        .attr("width",sec_width + sec_margin.left +sec_margin.right)
-                        .attr("height",sec_height+sec_margin.top + sec_margin.bottom);
+        // draw function
+        function draw(d) {
+            var data = Data();
+            data.setRawData(d);
+            // This is for debugging
+            window.data = data;
+            window.d3 = d3;
 
+            function changeAttribute() {
+                var selection = this.value;
+                console.log(selection);
 
-            // draw the main map in the center
-            var projection = d3.geoAlbersUsa() 
-                                .translate([main_width/2, main_height/2])
-                                .scale([500]);
+                updateView(left_view, selection);
+                updateView(right_view, selection);
+            };
 
+            var left_view = draw_left_view(data);
+            var right_view = draw_right_view(data);
 
+            var selection = d3.select("#main_graph")
+                    .append("div")
+                    .attr("id", "selection");
 
-        </script>
+            var span = selection.append('span')
+                .text('Select an attribute ');
 
-    </body>
+            var orderSelect = selection.append('select')
+                .attr('id', 'orderSelect')
+                .on('change', changeAttribute)
+                .selectAll('option')
+                .data(data.getZip()) 
+                .enter()
+                .append('option')
+                .attr('value', function (d) {
+                    return d;
+                })
+                .text(function (d) {
+                    return d;
+                });
+
+        }
+        // render the view
+        d3.csv("./processed_data.csv", draw);
+    </script>
+
+</body>
 
 
 </html>

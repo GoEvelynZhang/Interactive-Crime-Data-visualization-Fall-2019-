@@ -69,25 +69,64 @@ function Data() {
         },
         getZipArray: () => getZipArray,
         getClearnceArray: () => getClearnceArray,
-        getWeekData: function(zip=null) {
+        getWeekDataByZip: function(zip=null) {
             var arr = rawData;
             if (zip != null) arr = getZipArray(zip);
             var weekdays = [...Array(7).keys()];
             return Array.from(weekdays, x => arr.filter(d => d.weekday == x).length);
         }, 
-        getMonthData: function(zip=null) {
+        getAllWeekDataByZip: function() {
+            var allCrime = {null:this.getWeekDataByZip()};
+            ZIP.forEach( zip => {allCrime[zip] = this.getWeekDataByZip(zip);})
+            return allCrime;
+        },
+        getMonthDataByZip: function(zip=null) {
             var arr = rawData;
             if (zip != null) arr = getZipArray(zip);
             var months = Array.from([...Array(12).keys()], x => x+1);
             return Array.from(months, x => arr.filter(d => d.month == x).length);
         },
-        getCrimeData: function(zip=null) {
+        getAllMonthDataByZip: function() {
+            var allCrime = {null:this.getMonthDataByZip()};
+            ZIP.forEach( zip => {allCrime[zip] = this.getMonthDataByZip(zip);})
+            return allCrime;
+        },
+        getMonthDataByMonth: function(month) {
+            var obj = {month:month,null:rawData.filter(d => d["month"] == MONTH[month]).length};
+            ZIP.forEach( function (zip) {
+                obj[zip]=rawData.filter(d => d["GO Location Zip"] == zip && d["month"] == MONTH[month]).length;
+            });
+            return obj;
+        },
+        getAllMonthDataByMonth: function () {
+            var allCrime = [];
+            Object.keys(MONTH).forEach(d => allCrime.push(this.getMonthDataByMonth(d)));
+            return allCrime;
+        },
+        getCrimeDataByZip: function(zip=null) {
             var arr = rawData;
             if (zip != null) arr = getZipArray(zip);
             return Array.from(CRIME, x => arr.filter(d => d["Highest NIBRS/UCR Offense Description"]==x).length).reduce((acc, elem, i) => {
                 acc[CRIME[i]] = elem;
                 return acc;
             }, {});
+        },
+        getAllCrimeDataByZip: function() {
+            var allCrime = {null:this.getCrimeDataByZip()};
+            ZIP.forEach( zip => {allCrime[zip] = this.getCrimeDataByZip(zip);})
+            return allCrime;
+        },
+        getCrimeDataByCat: function(crime) {
+            var obj = {crime:crime,null:rawData.filter(d => d["Highest NIBRS/UCR Offense Description"] == crime).length};
+            ZIP.forEach( function (zip) {
+                obj[zip]=rawData.filter(d => d["GO Location Zip"] == zip && d["Highest NIBRS/UCR Offense Description"] == crime).length;
+            });
+            return obj;
+        },
+        getAllCrimeDataByCat: function () {
+            var allCrime = [];
+            CRIME.forEach(d => allCrime.push(this.getCrimeDataByCat(d)));
+            return allCrime;
         },
         getAllSafetyIdx: () => Array.from(ZIP, x => safetyIndex(getZipArray(x))).reduce((acc, elem, i) => {
             acc[ZIP[i]] = elem;
