@@ -16,7 +16,9 @@
     <h1>Austin Criminal Analytical Map</h1>
     <div class="graph">
         <div id="category_graph"></div>
-        <div id="main_graph"></div>
+        <div id="main_graph">
+            <span><a> Current Selection: </a><a id="currentSelection">Austin</a></span>
+        </div>
         <div id="time_series_graph"></div>
     </div>
 
@@ -277,6 +279,7 @@
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
+                document.getElementById("currentSelection").innerHTML = d.properties.geoid10 + " ";
                 updateView(left_view, d.properties.geoid10);
                 updateView(right_view, d.properties.geoid10);
             };
