@@ -63,29 +63,6 @@
             .range(["#007f00", "#99ff99", "#00b200", "#ccffcc", "#006100", "#009700", "#BEA6A0", "#56423D",
                 "rgb(255, 100, 0)", "rgb(255, 50, 0)", "#FF0000"
             ]);
-        // draw the main map in the center
-        d3.csv("processed_data.csv", function (d) {
-
-            var data = Data();
-            data.setRawData(d);
-            var dataset = data.getAllSafetyIdx();
-            // console.log(dataset);
-            var value_collection = [];
-            var key_collection = data.getZip();
-            for (var l = 0; l < key_collection.length; l++) {
-                value_collection.push(parseFloat(dataset[key_collection[l]]));
-            }
-
-
-            color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
-
-            // console.log(key_collection);
-
-            d3.json("Boundaries_Zip.geojson", function (json) {
-                draw(data, json);
-            });
-        });
-
 
         // Global zip selection
         var zip_selection = 512;
@@ -213,6 +190,7 @@
             window.data = data;
             window.d3 = d3;
 
+
             var key_collection = data.getZip();
             var dataset = data.getAllSafetyIdx();
             // bind each zip section with the safty index
@@ -231,7 +209,6 @@
 
             var w = (main_width + main_margin.left + main_margin.right) / 2;
             var h = (main_height + main_margin.top + main_margin.bottom) / 2;
-
             var mainProjection = d3.geoMercator()
                 .center([-97.725073, 30.287884])
                 .fitExtent([
@@ -241,21 +218,23 @@
                 .translate([w, h]);
             var mainPath = d3.geoPath().projection(mainProjection);
             var selected = function (d, i) {
-                    d3.select(this).style('fill-opacity', 1);
-                };
+                d3.select(this).style('fill-opacity', 1);
+            };
             var restored = function (d, i) {
-                    d3.select(this)
-                        .style('fill-opacity', 0.7);
-                };
-    
-            //Bind data and create one path per GeoJSON feature
+                d3.select(this)
+                    .style('fill-opacity', 0.7);
+            };
+
+            // Bind data and create one path per GeoJSON feature
             main.selectAll("path")
                 .data(json.features)
                 .enter()
                 .append("path")
                 .attr("d", mainPath)
                 .attr("stroke", "black")
-                .attr("value",function(d){return d.properties.geoid10;})
+                .attr("value", function (d) {
+                    return d.properties.geoid10;
+                })
                 .attr("stoke-width", "1")
                 .style("fill", function (d) {
                     // get the binded index value
@@ -271,9 +250,28 @@
                 .on("mouseout", restored)
                 .on("click", changeZip)
                 .append("title")
-                    .text(function(d){return d.properties.geoid10});
-               
-            
+                .text(d => d.properties.geoid10);
+
+            // Zoom and Panning
+            var zoom = d3.zoom()
+                .extent([
+                    [0, 0],
+                    [w * 1.7, h * 1.7]
+                ])
+                .scaleExtent([1, 10])
+                .translateExtent([
+                    [main_margin.top, main_margin.left],
+                    [main_height - main_margin.bottom, main_width - main_margin.right]
+                ])
+                .on("zoom", zoomed);
+
+            function zoomed() {
+                main.selectAll("path").attr("transform", () => d3.event.transform)
+            }
+
+            main.call(zoom);
+
+
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
@@ -284,6 +282,30 @@
             var left_view = draw_left_view(data);
             var right_view = draw_right_view(data);
         }
+
+        // draw the main map in the center
+        d3.csv("processed_data.csv", function (d) {
+
+            var data = Data();
+            data.setRawData(d);
+            var dataset = data.getAllSafetyIdx();
+            // console.log(dataset);
+            var value_collection = [];
+            var key_collection = data.getZip();
+            for (var l = 0; l < key_collection.length; l++) {
+                value_collection.push(parseFloat(dataset[key_collection[l]]));
+            }
+
+
+            color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
+
+            // console.log(key_collection);
+
+            d3.json("Boundaries_Zip.geojson", function (json) {
+                draw(data, json);
+            });
+        });
     </script>
 </body>
+
 </html>
