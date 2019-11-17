@@ -11,6 +11,8 @@ max-width:2000px;
 #sub_graphs {
     display: inline-block;
     border-width: 1px;
+    position: absolute;
+    top:0px;
     border-style: solid;
     height:879px;
 }
@@ -25,6 +27,9 @@ h1,h2,h3 {
     position: relative;
     text-align: center;
 
+}
+h1{
+    font-size: 45px;
 }
 
 .bar {
@@ -45,6 +50,10 @@ h1,h2,h3 {
 
 #SelectionNode{
     font-size:29px;
+    position:relative;
+    left: 400px;
+    font-size: 30px;
+
 }
 
 #currentSelection{
@@ -52,6 +61,33 @@ h1,h2,h3 {
 }
 
 #restore{
-    position:static;
+    position:relative;
+    left:790px;
+    top :750px;
     font-size:20px;
+    cursor: pointer;
+    color: #fff;
+    background-color: #007bff;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    border-color: #007bff;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
 }
+
+
+
+
+
+
+
+
+
+}
+
