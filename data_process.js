@@ -38,12 +38,12 @@ function Data() {
     };
 
     const CRIME_WEIGHT = {
-        'Agg Assault': 4,
-        'Auto Theft': 3,
-        'Burglary': 2,
-        'Murder': 6,
-        'Robbery': 5,
-        'Theft': 1
+        'Agg Assault': 4.,
+        'Auto Theft': 3.,
+        'Burglary': 2.,
+        'Murder': 6.,
+        'Robbery': 5.,
+        'Theft': 1.
     };
     
     const CRIME = Object.keys(CRIME_WEIGHT);

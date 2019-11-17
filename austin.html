@@ -31,9 +31,9 @@
 
     <script>
         // Main view dimension {MARKER}
-        var main_height = 800;
-        var main_width = 800;
-        var main_margin = {
+        const main_height = 800;
+        const main_width = 800;
+        const main_margin = {
             "top": 20,
             "bottom": 20,
             "left": 20,
@@ -41,45 +41,47 @@
         };
 
         // Sub view dimension
-        var sec_height = 400;
-        var sec_width = 400;
-
-        var sec_margin = {
+        const sec_height = 400;
+        const sec_width = 400;
+        const sec_margin = {
             "top": 12,
             "bottom": 12,
             "left": 20,
             "right": 12
         };
-
+        // append svgs
         var left_graph = d3.select("#category_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
-
         var main_legend = d3.select("#main_graph").append("svg")
             .attr("transform", "translate(-320,-600)")
             .attr("width", 250)
             .attr("height", 200);
-
         var main = d3.select("#main_graph").append("svg")
             .attr("transform", "translate(-160,0)")
             .attr("width", main_width + main_margin.left + main_margin.right)
             .attr("height", main_height + main_margin.top + main_margin.bottom);
-
         var right_graph = d3.select("#time_series_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+        // main view color mapping
         var color_range = ["#315B29", "#B0D2AD", "#E49C9D", "#AA2E24"];
         var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
+        // color changed when selected
+        const opacity = 0.5;
+        function selected() {return d3.select(this).style('fill-opacity', 1)};
+        function restored() {return d3.select(this).style('fill-opacity', opacity)};
 
+        // define draw_legend
         function draw_legend() {
-            // #draw the color legend
+            // draw the color legend
             main_legend.append("rect")
                 .attr("x", 0)
                 .attr("y", 10 + 40 * 0)
                 .attr("width", 70)
                 .attr("height", 30)
-                .style("fill", "#cccccc");
+                .style("fill", "#ccc");
             main_legend.append("text")
                 .attr("x", 75)
                 .attr("y", 32 + 40 * 0)
@@ -99,10 +101,6 @@
                     .attr("font-size", "20")
             }
         }
-        // draw the main map in the center
-        var projection = d3.geoAlbersUsa()
-            .translate([main_width / 2, main_height / 2])
-            .scale([500]);
 
         // define left view
         function draw_left_view(data) {
@@ -207,39 +205,8 @@
             };
         }
 
-        function updateView(view, zip) {
-            view.update(view.yScale, zip);
-            view.yAxis.scale(view.yScale);
-            view.svg.select(".y.axis").transition(1000).call(view.yAxis);
-            view.mark.setZip(zip);
-            view.mark.setScale(view.xScale, view.yScale);
-            view.mark.update(view.svg);
-        };
-
-
-        // draw function
-        function draw(data, json) {
-            // This is for debugging
-            window.data = data;
-            window.d3 = d3;
-
-
-            var key_collection = data.getZip();
-            var dataset = data.getAllSafetyIdx();
-            // bind each zip section with the safty index
-            for (var i = 0; i < key_collection.length; i++) {
-                var zip_name = key_collection[i];
-                var zip_index = parseFloat(dataset[zip_name]);
-                for (var j = 0; j < json.features.length; j++) {
-                    var json_zip = json.features[j].properties.geoid10;
-                    if (zip_name == json_zip) {
-                        json.features[j].properties.value = zip_index;
-                        // console.log(zip_index);
-                        break
-                    }
-                }
-            }
-
+        // define main view
+        function draw_main_view(json) {
             var w = (main_width + main_margin.left + main_margin.right) / 2;
             var h = (main_height + main_margin.top + main_margin.bottom) / 2;
             var mainProjection = d3.geoMercator()
@@ -250,41 +217,6 @@
                 ], json)
                 .translate([w, h]);
             var mainPath = d3.geoPath().projection(mainProjection);
-            var selected = function (d, i) {
-                d3.select(this).style('fill-opacity', 1);
-            };
-            var restored = function (d, i) {
-                d3.select(this)
-                    .style('fill-opacity', 0.7);
-            };
-
-            // Bind data and create one path per GeoJSON feature
-            main.selectAll("path")
-                .data(json.features)
-                .enter()
-                .append("path")
-                .attr("d", mainPath)
-                .attr("stroke", "black")
-                .attr("value", function (d) {
-                    return d.properties.geoid10;
-                })
-                .attr("stoke-width", "1")
-                .style("fill", function (d) {
-                    // get the binded index value
-                    var value = d.properties.value;
-                    if (value) {
-                        return color(value);
-                    } else {
-                        return "#ccc";
-                    }
-                })
-                .style("fill-opacity", 0.7)
-                .on("mouseover", selected)
-                .on("mouseout", restored)
-                .on("click", changeZip)
-                .append("title")
-                .text(d => d.properties.geoid10);
-
             // Zoom and Panning
             var zoom = d3.zoom()
                 .extent([
@@ -309,7 +241,50 @@
                     .call(zoom.transform, d3.zoomIdentity);
             }
 
+            // Bind data and create one path per GeoJSON feature
+            main.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", mainPath)
+                .attr("stroke", "black")
+                .attr("value", d => d.properties.geoid10)
+                .attr("stoke-width", 1)
+                .style("fill", d => d.properties.value ? color(d.properties.value) : "#ccc")
+                .style("fill-opacity", opacity)
+                .on("mouseover", selected)
+                .on("mouseout", restored)
+                .append("title")
+                .text(d => d.properties.geoid10);
+
             main.call(zoom);
+            return resetted;
+        }
+
+        // function for updating view
+        function updateView(view, zip) {
+            view.update(view.yScale, zip);
+            view.yAxis.scale(view.yScale);
+            view.svg.select(".y.axis").transition(1000).call(view.yAxis);
+            view.mark.setZip(zip);
+            view.mark.setScale(view.xScale, view.yScale);
+            view.mark.update(view.svg);
+        };
+
+        // draw function
+        function draw(data, json) {
+            // This is for debugging
+            window.data = data;
+            window.json = json
+            window.d3 = d3;
+            var saftyIdx = data.getAllSafetyIdx();
+
+            // bind each zip section with the safty index
+            data.getZip().forEach(zip => {
+                json.features.forEach((d, i) => {
+                    if (d.properties.geoid10 == zip)  json.features[i].properties.value = saftyIdx[zip];
+                })
+            });
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
@@ -320,9 +295,9 @@
 
             var left_view = draw_left_view(data);
             var right_view = draw_right_view(data);
-
-            // #restore Autin View
-            document.getElementById("restore").onclick = restore;
+            var resetted = draw_main_view(json);
+            var legend_view = draw_legend();
+            main.selectAll("path").on("click", changeZip);
 
             function restore() {
                 resetted();
@@ -330,25 +305,20 @@
                 updateView(left_view, 512);
                 updateView(right_view, 512);
             };
+
+            // restore Autin View
+            document.getElementById("restore").onclick = restore;
+
         }
 
         // draw the main map in the center
         d3.csv("processed_data.csv", function (d) {
             var data = Data();
             data.setRawData(d);
-            var dataset = data.getAllSafetyIdx();
-            // console.log(dataset);
-            var value_collection = [];
-            var key_collection = data.getZip();
-            for (var l = 0; l < key_collection.length; l++) {
-                value_collection.push(parseFloat(dataset[key_collection[l]]));
-            }
-
-            color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
-
+            var saftyIdx = Object.values(data.getAllSafetyIdx());
+            color.domain([Math.min.apply(null, saftyIdx), Math.max.apply(null, saftyIdx)]);
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
-                draw_legend();
             });
         });
     </script>
