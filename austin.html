@@ -15,8 +15,16 @@
 <body>
     <div class="maincontainer">
         <h1>Austin Criminal Analytical Map</h1>
-        <div id="category_graph">
-            <h2> Crime Catagory Graph </h2>
+        <div id="sub_graphs">
+
+            <div id="category_graph">
+                <h3> Crime Catagory Graph </h3>
+            </div>
+
+            <div id="time_series_graph">
+                <h3> Time Series Graph </h3>
+            </div>
+
         </div>
         <div id="main_graph">
             <span id="SelectionNode">
@@ -24,25 +32,22 @@
                 <button id="restore" type="button">Restore</button>
             </span>
         </div>
-        <div id="time_series_graph">
-            <h2> Time Series Graph </h2>
-        </div>
     </div>
 
     <script>
-        // Main view dimension {MARKER}
-        const main_height = 800;
-        const main_width = 800;
+   1     // Main view dimension {MARKER}
+        const main_height = 850;
+        const main_width = 850;
         const main_margin = {
-            "top": 20,
-            "bottom": 20,
-            "left": 20,
-            "right": 20
+            "top": 10,
+            "bottom": 10,
+            "left": 10,
+            "right": 10
         };
 
         // Sub view dimension
-        const sec_height = 400;
-        const sec_width = 400;
+        const sec_height = 350;
+        const sec_width = 350;
         const sec_margin = {
             "top": 12,
             "bottom": 12,
@@ -50,7 +55,7 @@
             "right": 12
         };
         // append svgs
-        var left_graph = d3.select("#category_graph").append("svg")
+        var cat_graph = d3.select("#category_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         var main_legend = d3.select("#main_graph").append("svg")
@@ -61,7 +66,7 @@
             .attr("transform", "translate(-160,0)")
             .attr("width", main_width + main_margin.left + main_margin.right)
             .attr("height", main_height + main_margin.top + main_margin.bottom);
-        var right_graph = d3.select("#time_series_graph").append("svg")
+        var time_graph = d3.select("#time_series_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         // main view color mapping
@@ -69,7 +74,7 @@
         var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
-        const opacity = 0.5;
+        const opacity = 0.6;
         function selected() {return d3.select(this).style('fill-opacity', 1)};
         function restored() {return d3.select(this).style('fill-opacity', opacity)};
 
@@ -102,8 +107,8 @@
             }
         }
 
-        // define left view
-        function draw_left_view(data) {
+        // define cat view
+        function draw_cat_view(data) {
             var allCrime = data.getAllCrimeDataByCat();
             // Set up Xscale
             var xScale = d3.scaleBand()
@@ -124,12 +129,12 @@
             var yAxis = d3.axisLeft(yScale)
                 .tickFormat(d3.format(".2s"));
             // Draw xAxis
-            left_graph.append("g")
+            cat_graph.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
                 .call(xAxis);
             // Draw yAxis
-            left_graph.append("g")
+            cat_graph.append("g")
                 .attr("class", "y axis")
                 .attr("transform", "translate(" + (sec_margin.left + 10) + "," + 0 + ")")
                 .call(yAxis);
@@ -139,11 +144,11 @@
                 .setScale(xScale, yScale)
                 .setZip(512); // the default value is the while map
             //Draw bars
-            left_graph.datum(allCrime)
+            cat_graph.datum(allCrime)
                 .call(bars);
 
             return {
-                svg: left_graph,
+                svg: cat_graph,
                 data: allCrime,
                 update: updateYScale,
                 xScale: xScale,
@@ -154,8 +159,8 @@
             };
         }
 
-        // define right view
-        function draw_right_view(data) {
+        // define time view
+        function draw_time_view(data) {
             var allCrime = data.getAllMonthDataByMonth();
             // Set up Xscale
             var xScale = d3.scaleBand()
@@ -175,12 +180,12 @@
             var yAxis = d3.axisLeft(yScale)
                 .tickFormat(d3.format("d"));
             // Draw xAxis
-            right_graph.append("g")
+            time_graph.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(" + sec_margin.left + "," + (sec_margin.top + sec_height - 10) + ")")
                 .call(xAxis);
             // Draw yAxis
-            right_graph.append("g")
+            time_graph.append("g")
                 .attr("class", "y axis")
                 .attr("transform", "translate(" + (sec_margin.left + 20) + "," + 0 + ")")
                 .call(yAxis);
@@ -190,11 +195,11 @@
                 .setScale(xScale, yScale)
                 .setZip(512); // the default value is the while map
             //Draw line
-            right_graph.datum(allCrime)
+            time_graph.datum(allCrime)
                 .call(line);
 
             return {
-                svg: right_graph,
+                svg: time_graph,
                 data: allCrime,
                 update: updateYScale,
                 xScale: xScale,
@@ -271,7 +276,7 @@
             view.mark.update(view.svg);
         };
 
-        // draw function
+        // combined draw function
         function draw(data, json) {
             // This is for debugging
             window.data = data;
@@ -293,8 +298,8 @@
                 updateView(right_view, d.properties.geoid10);
             };
 
-            var left_view = draw_left_view(data);
-            var right_view = draw_right_view(data);
+            var left_view = draw_cat_view(data);
+            var right_view = draw_time_view(data);
             var resetted = draw_main_view(json);
             var legend_view = draw_legend();
             main.selectAll("path").on("click", changeZip);
