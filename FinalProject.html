@@ -3,20 +3,27 @@
 
 <head>
     <!-- <script src = "Boundaries_Zip.geojson"></script> -->
+   
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
     <script type="text/javascript" src="data_process.js"></script>
     <script type="text/javascript" src="barchart_closure.js"></script>
     <script type="text/javascript" src="linechart_closure.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.13.0/d3-legend.js"></script>
     <link rel="stylesheet" href="style.css">
+    
 </head>
 
 <body>
     <h1>Austin Criminal Analytical Map</h1>
     <div class="graph">
         <div id="category_graph"></div>
-        <div id="main_graph"></div>
+        <div id="main_graph">
+            <span id = "SelectionNode"><a> Current Selection: </a><a id="currentSelection">Austin</a></span>
+             
+            <button id = "restore" type="button">Restore</button>
+        </div>
         <div id="time_series_graph"></div>
     </div>
 
@@ -50,19 +57,62 @@
         var left_graph = d3.select("#category_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+        var main_legend = d3.select("#main_graph").append("svg") 
+                     .attr("transform","translate(-320,-600)")
+                    .attr("width",200)
+                    .attr("height",200);
 
         var main = d3.select("#main_graph").append("svg")
+            .attr("transform","translate(-160,0)")
             .attr("width", main_width + main_margin.left + main_margin.right)
             .attr("height", main_height + main_margin.top + main_margin.bottom);
 
         var right_graph = d3.select("#time_series_graph").append("svg")
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
+        var color_range = ["#315B29","#B0D2AD","#E49C9D","#AA2E24"];
+        var index_note = ["saftest","safe","dangerous","most dangerous"];
+        var color = d3.scaleQuantize().range(color_range);
+// #draw the color legend
+        for (var i = 0; i<color_range.length;i++){
+        main_legend.append("rect")
+                .attr("x",0)
+                .attr("y",10+40*i)
+                .attr("width",70)
+                .attr("height",30)
+                .style("fill",color_range[i]);
+        main_legend.append("text")
+                .attr("x",75)
+                .attr("y",32+40*i)
+                .text(index_note[i])
+                .attr("font-size","20")
+    
+    
+    }
+       
+        // draw the main map in the center
+        d3.csv("processed_data.csv", function (d) {
 
-        var color = d3.scaleQuantize()
-            .range(["#007f00", "#99ff99", "#00b200", "#ccffcc", "#006100", "#009700", "#BEA6A0", "#56423D",
-                "rgb(255, 100, 0)", "rgb(255, 50, 0)", "#FF0000"
-            ]);
+            var data = Data();
+            data.setRawData(d);
+            var dataset = data.getAllSafetyIdx();
+            // console.log(dataset);
+            var value_collection = [];
+            var key_collection = data.getZip();
+            for (var l = 0; l < key_collection.length; l++) {
+                value_collection.push(parseFloat(dataset[key_collection[l]]));
+            }
+
+
+            color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
+
+            // console.log(key_collection);
+
+            d3.json("Boundaries_Zip.geojson", function (json) {
+                draw(data, json);
+            });
+        });
+
 
         // Global zip selection
         var zip_selection = 512;
@@ -184,6 +234,7 @@
             view.mark.update(view.svg);
         };
 
+
         // draw function
         function draw(data, json) {
             // This is for debugging
@@ -275,12 +326,21 @@
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
+                document.getElementById("currentSelection").innerHTML = d.properties.geoid10 + " ";
                 updateView(left_view, d.properties.geoid10);
                 updateView(right_view, d.properties.geoid10);
             };
 
             var left_view = draw_left_view(data);
             var right_view = draw_right_view(data);
+
+         // #restore Autin View
+         document.getElementById("restore").onclick = restore;
+        function restore(){
+            updateView(left_view, 512);
+            updateView(right_view, 512);
+
+        };
         }
 
         // draw the main map in the center
