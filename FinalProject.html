@@ -2,8 +2,6 @@
 <html>
 
 <head>
-    <!-- <script src = "Boundaries_Zip.geojson"></script> -->
-
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
     <script type="text/javascript" src="data_process.js"></script>
     <script type="text/javascript" src="barchart_closure.js"></script>
@@ -15,16 +13,20 @@
 </head>
 
 <body>
-    <h1>Austin Criminal Analytical Map</h1>
-    <div class="graph">
-        <div id="category_graph"></div>
+    <div class="maincontainer">
+        <h1>Austin Criminal Analytical Map</h1>
+        <div id="category_graph">
+            <h2> Crime Catagory Graph </h2>
+        </div>
         <div id="main_graph">
             <span id="SelectionNode">
-                <a> Current Selection: </a><a id="currentSelection">Austin</a> 
+                <a> Current Selection: </a><a id="currentSelection">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
         </div>
-        <div id="time_series_graph"></div>
+        <div id="time_series_graph">
+            <h2> Time Series Graph </h2>
+        </div>
     </div>
 
     <script>
@@ -73,11 +75,11 @@
         function draw_legend() {
             // #draw the color legend
             main_legend.append("rect")
-                    .attr("x", 0)
-                    .attr("y", 10 + 40 * 0)
-                    .attr("width", 70)
-                    .attr("height", 30)
-                    .style("fill", "#cccccc");
+                .attr("x", 0)
+                .attr("y", 10 + 40 * 0)
+                .attr("width", 70)
+                .attr("height", 30)
+                .style("fill", "#cccccc");
             main_legend.append("text")
                 .attr("x", 75)
                 .attr("y", 32 + 40 * 0)
@@ -86,13 +88,13 @@
             for (var i = 0; i < color_range.length; i++) {
                 main_legend.append("rect")
                     .attr("x", 0)
-                    .attr("y", 10 + 40 * (i+1))
+                    .attr("y", 10 + 40 * (i + 1))
                     .attr("width", 70)
                     .attr("height", 30)
                     .style("fill", color_range[i]);
                 main_legend.append("text")
                     .attr("x", 75)
-                    .attr("y", 32 + 40 * (i+1))
+                    .attr("y", 32 + 40 * (i + 1))
                     .text(index_note[i])
                     .attr("font-size", "20")
             }
@@ -114,7 +116,8 @@
                 .rangeRound([sec_height - sec_margin.bottom, sec_margin.top]);
             var updateYScale = (yScale, zip = 512) => {
                 yScale.domain([0, d3.max(Object.values(data.getCrimeDataByZip(zip))) *
-                1.25]); // the default value is the while map
+                    1.25
+                ]); // the default value is the while map
             };
             updateYScale(yScale);
             // Define xAxis
@@ -342,7 +345,6 @@
             }
 
             color.domain([Math.min.apply(null, value_collection), Math.max.apply(null, value_collection)]);
-
 
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);

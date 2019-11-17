@@ -1,3 +1,12 @@
+#maincontainer 
+{   
+top:0px;
+padding-top:0;
+margin:auto; position:relative;
+width:1800px;
+height:100%;
+}
+
 #category_graph,
 #main_graph,
 #time_series_graph {
@@ -7,7 +16,7 @@
 
 #category_graph,
 #time_series_graph {
-    transform: translate(16%, -95px);
+    transform: translate(34%, -50%);
 
 }
 
@@ -21,7 +30,7 @@ div {
     border-style: solid;
 }
 
-h1 {
+h1,h2 {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     position: relative;
     text-align: center;
@@ -49,9 +58,8 @@ h1 {
 #currentSelection{
     color: blue;
 }
+
 #restore{
-    position:relative;
-    top:-600px;
-    left:-238px;
-    
+    position:static;
+    font-size:20px;
 }
