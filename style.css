@@ -43,3 +43,15 @@ h1 {
     stroke: steelblue;
     stroke-width: 1.5;
 }
+#SelectionNode{
+    font-size:29px;
+}
+#currentSelection{
+    color: blue;
+}
+#restore{
+    position:relative;
+    top:-600px;
+    left:-238px;
+    
+}
