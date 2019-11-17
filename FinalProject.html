@@ -70,8 +70,8 @@
             data.setRawData(d);
             var dataset = data.getAllSafetyIdx();
             // console.log(dataset);
-            var key_collection = Object.keys(dataset);
             var value_collection = [];
+            var key_collection = data.getZip();
             for (var l = 0; l < key_collection.length; l++) {
                 value_collection.push(parseFloat(dataset[key_collection[l]]));
             }
@@ -82,66 +82,10 @@
             // console.log(key_collection);
 
             d3.json("Boundaries_Zip.geojson", function (json) {
-                drawMain(json, key_collection, dataset);
-                draw(data);
+                draw(data, json);
             });
         });
 
-        function drawMain(json, key_collection, dataset) {
-            // bind each zip section with the safty index
-            for (var i = 0; i < key_collection.length; i++) {
-                var zip_name = key_collection[i];
-                var zip_index = parseFloat(dataset[zip_name]);
-                for (var j = 0; j < json.features.length; j++) {
-                    var json_zip = json.features[j].properties.geoid10;
-                    if (zip_name == json_zip) {
-                        json.features[j].properties.value = zip_index;
-                        // console.log(zip_index);
-                        break
-                    }
-                }
-            }
-
-            var w = (main_width + main_margin.left + main_margin.right) / 2;
-            var h = (main_height + main_margin.top + main_margin.bottom) / 2;
-
-            var mainProjection = d3.geoMercator()
-                .center([-97.725073, 30.287884])
-                .fitExtent([
-                    [0, 0],
-                    [w * 1.7, h * 1.7]
-                ], json)
-                .translate([w, h]);
-            // var mainProjection = d3.geoAlbersUsa().translate([main_width/2, main_height/2]).scale([500]);
-            var mainPath = d3.geoPath().projection(mainProjection);
-
-            // console.log(json)
-            //Bind data and create one path per GeoJSON feature
-            main.selectAll("path")
-                .data(json.features)
-                .enter()
-                .append("path")
-                .attr("d", mainPath)
-                .attr("stroke", "black")
-                .attr("stoke-width", "1")
-                .style("fill", function (d) {
-                    // get the binded index value
-                    var value = d.properties.value;
-                    if (value) {
-                        return color(value);
-                    } else {
-                        return "#ccc";
-                    }
-                })
-                .style("fill-opacity", 0.7)
-                .on("mouseover", function (d, i) {
-                    d3.select(this).style('fill-opacity', 1);
-                })
-                .on("mouseout", function (d, i) {
-                    d3.select(this)
-                        .style('fill-opacity', 0.7);
-                });
-        }
 
         // Global zip selection
         var zip_selection = 512;
@@ -264,48 +208,81 @@
         };
 
         // draw function
-        function draw(data) {
+        function draw(data, json) {
             // This is for debugging
             window.data = data;
             window.d3 = d3;
 
-            function changeAttribute() {
-                var selection = this.value;
-                console.log(selection);
+            var key_collection = data.getZip();
+            var dataset = data.getAllSafetyIdx();
+            // bind each zip section with the safty index
+            for (var i = 0; i < key_collection.length; i++) {
+                var zip_name = key_collection[i];
+                var zip_index = parseFloat(dataset[zip_name]);
+                for (var j = 0; j < json.features.length; j++) {
+                    var json_zip = json.features[j].properties.geoid10;
+                    if (zip_name == json_zip) {
+                        json.features[j].properties.value = zip_index;
+                        // console.log(zip_index);
+                        break
+                    }
+                }
+            }
 
-                updateView(left_view, selection);
-                updateView(right_view, selection);
+            var w = (main_width + main_margin.left + main_margin.right) / 2;
+            var h = (main_height + main_margin.top + main_margin.bottom) / 2;
+
+            var mainProjection = d3.geoMercator()
+                .center([-97.725073, 30.287884])
+                .fitExtent([
+                    [0, 0],
+                    [w * 1.7, h * 1.7]
+                ], json)
+                .translate([w, h]);
+            var mainPath = d3.geoPath().projection(mainProjection);
+            var selected = function (d, i) {
+                    d3.select(this).style('fill-opacity', 1);
+                };
+            var restored = function (d, i) {
+                    d3.select(this)
+                        .style('fill-opacity', 0.7);
+                };
+    
+            //Bind data and create one path per GeoJSON feature
+            main.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", mainPath)
+                .attr("stroke", "black")
+                .attr("value",function(d){return d.properties.geoid10;})
+                .attr("stoke-width", "1")
+                .style("fill", function (d) {
+                    // get the binded index value
+                    var value = d.properties.value;
+                    if (value) {
+                        return color(value);
+                    } else {
+                        return "#ccc";
+                    }
+                })
+                .style("fill-opacity", 0.7)
+                .on("mouseover", selected)
+                .on("mouseout", restored)
+                .on("click", changeZip)
+                .append("title")
+                    .text(function(d){return d.properties.geoid10});
+               
+            
+
+            function changeZip(d) {
+                console.log(d.properties.geoid10);
+                updateView(left_view, d.properties.geoid10);
+                updateView(right_view, d.properties.geoid10);
             };
 
             var left_view = draw_left_view(data);
             var right_view = draw_right_view(data);
-
-            var selection = d3.select("#main_graph")
-                .append("div")
-                .attr("id", "selection");
-
-            var span = selection.append('span')
-                .text('Select an attribute ');
-
-            var orderSelect = selection.append('select')
-                .attr('id', 'orderSelect')
-                .on('change', changeAttribute);
-
-            selection.select("#orderSelect")
-                .append("option")
-                .attr("value", 512)
-                .text("All");
-
-            orderSelect.selectAll('option')
-                .data(data.getZip())
-                .enter()
-                .append('option')
-                .attr('value', function (d) {
-                    return d;
-                })
-                .text(function (d) {
-                    return d;
-                });
         }
     </script>
 </body>
