@@ -17,7 +17,7 @@
     <div class="maincontainer">
         <div id="main_graph">
             <span id="SelectionNode">
-                <a> Current ZIP Zone: </a><a id="currentSelection">Austin</a>
+                <a> Current ZIP Zone: </a><a id="currentSelection" href="https://www.zipdatamaps.com/area-code-512" target="_blank">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
         </div>
@@ -299,6 +299,7 @@
             function changeZip(d) {
                 console.log(d.properties.geoid10);
                 document.getElementById("currentSelection").innerHTML = d.properties.geoid10 + " ";
+                document.getElementById("currentSelection").href = "https://www.zipdatamaps.com/" + d.properties.geoid10; 
                 updateView(left_view, d.properties.geoid10);
                 updateView(right_view, d.properties.geoid10);
             };
@@ -312,6 +313,7 @@
             function restore() {
                 resetted();
                 document.getElementById("currentSelection").innerHTML = "Austin";
+                document.getElementById("currentSelection").href = "https://www.zipdatamaps.com/area-code-512";
                 updateView(left_view, 512);
                 updateView(right_view, 512);
             };
