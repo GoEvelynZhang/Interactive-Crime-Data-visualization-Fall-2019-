@@ -74,7 +74,31 @@
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
+        var selected = function (d) {
+            d3.select(this).style("stroke", "yellow").style("stroke-width", "3");
+            // mouseover with the tooltip action
+            div_tooltip.transition()
+            .duration(200)
+            .style("opacity", 0.9);
 
+            var html = "ZipCode: " + (d.properties.geoid10).toString() + "</br>" +
+            "Number of cases: " + (d.properties.caseNum).toString() + "</br>" +
+            "Clearance Rate: " + (parseFloat(d.properties.clearRate * 100).toFixed(2) + "%")
+            .toString() + "</br>" +
+            "Clearance Time: " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2)).toString() + " Days" :
+            "N/A") + "</br>";
+            var xPosition = d3.mouse(this)[0] - 5;
+            var yPosition = d3.mouse(this)[1] - 5;
+            div_tooltip.html(html)
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px");
+        };
+        var restored = function (d) {
+            d3.select(this).style("stroke-width", "0");
+            div_tooltip.transition()
+            .duration(500)
+            .style("opacity", 0);
+        };
 
         // Define the div for the tooltip
         var div_tooltip = d3.select("#main_graph").append("div")
@@ -235,7 +259,7 @@
             var zoom = d3.zoom()
                 .extent([
                     [0, 0],
-                    [w * 1.7, h * 1.7]
+                    [w * 1.89, h * 1.89]
                 ])
                 .scaleExtent([1, 10])
                 .translateExtent([
@@ -265,38 +289,20 @@
                 .attr("value", d => d.properties.geoid10)
                 .attr("stoke-width", 1)
                 .style("fill", d => d.properties.saftyIdx ? color(d.properties.saftyIdx) : "#ccc")
-                .style("fill-opacity", 1)
-                .on("mouseover", function (d) {
-                    d3.select(this).style("stroke", "yellow").style("stroke-width", "3");
-                    // mouseover with the tooltip action
-                    if (1) {
-                        div_tooltip.transition()
-                            .duration(200)
-                            .style("opacity", 0.9);
+                .style("fill-opacity", 1);
 
-                        var html = "ZipCode:  " + (d.properties.geoid10).toString() + "</br>" +
-                            "Number of cases:  " + (d.properties.caseNum).toString() + "</br>" +
-                            "Clearance Rate:  " + (parseFloat(d.properties.clearRate * 100).toFixed(2) + "%")
-                            .toString() + "</br>" +
-                            "Clearance Time:  " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2)).toString() + " Days" : "N/A") + "</br>";
-                        var xPosition = d3.mouse(this)[0] - 5;
-                        var yPosition = d3.mouse(this)[1] - 5;
-                        div_tooltip.html(html)
-                            .style("left", (d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                    }
+            var highLight_layer = main.append("g");
 
-                })
-
-                .on("mouseout", function (d) {
-                    d3.select(this).style("stroke", "black").style("stroke-width", "1");
-                    div_tooltip.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                });
-
-            // .append("title")
-            // .text(d => d.properties.geoid10);
+            highLight_layer.selectAll("path")
+                .data(json.features)
+                .enter()
+                .append("path")
+                .attr("d", mainPath)
+                .attr("class", "highLight")
+                .attr("stoke-width", 0)
+                .style("fill-opacity", 0)
+                .on("mouseover", selected)
+                .on("mouseout", restored);
 
             main.call(zoom);
             return resetted;
@@ -348,7 +354,7 @@
             var right_view = draw_time_view(data);
             var resetted = draw_main_view(json);
             var legend_view = draw_legend();
-            main.selectAll("path").on("click", changeZip);
+            main.selectAll(".highLight").on("click", changeZip);
 
             function restore() {
                 resetted();
