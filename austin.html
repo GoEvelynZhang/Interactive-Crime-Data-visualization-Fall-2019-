@@ -73,9 +73,12 @@
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
-        // const opacity = 0.6;
-        function selected() {return d3.select(this).attr('stroke', 'yellow').attr("stroke-width",4)};
-        function restored() {return d3.select(this).attr('stroke', "black").attr("stroke-width",1)};
+        
+        
+        // Define the div for the tooltip
+        var div_tooltip = d3.select("#main_graph").append("div")
+                    .attr("class","tooltip")
+                    .style("opacity",0);
 
         // define draw_legend
         function draw_legend() {
@@ -260,12 +263,39 @@
                 .attr("stroke", "black")
                 .attr("value", d => d.properties.geoid10)
                 .attr("stoke-width", 1)
-                .style("fill", d => d.properties.value ? color(d.properties.value) : "#ccc")
+                .style("fill", d => d.properties.saftyIdx ? color(d.properties.saftyIdx) : "#ccc")
                 .style("fill-opacity", 1)
-                .on("mouseover", selected)
-                .on("mouseout", restored)
-                .append("title")
-                .text(d => d.properties.geoid10);
+                
+                .on("mouseover", function(d){
+                    d3.select(this).style("stroke","yellow").style("stroke-width","3");
+                    // mouseover with the tooltip action
+                    if (d.properties.geoid10 && d.properties.caseNum &&d.properties.clearRate &&  d.properties.clearTime){
+                    div_tooltip.transition()
+                                .duration(200)
+                                .style("opacity",0.9);
+                                console.log("inside")
+      
+                    var html = "ZipCode:  "+ (d.properties.geoid10).toString() +"</br>"+
+                                "Crime Number:  "+ (d.properties.caseNum).toString()+"</br>"+
+                                "Clearance Rate:  " + (parseFloat(d.properties.clearRate*100).toFixed(2)+"%").toString() + "</br>"+
+                                "Clearance Time:  " + (d.properties.clearTime.toFixed(2)).toString() + " Days</br>";
+                    var xPosition = d3.mouse(this)[0] - 5;
+                    var yPosition = d3.mouse(this)[1] - 5;  
+                    div_tooltip.html(html)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");}
+                       
+                })
+                
+                .on("mouseout",function(d){
+                    d3.select(this).style("stroke","black").style("stroke-width","1");
+                    div_tooltip.transition()
+                                .duration(500)
+                                 .style("opacity", 0);
+                });
+
+                // .append("title")
+                // .text(d => d.properties.geoid10);
 
             main.call(zoom);
             return resetted;
@@ -287,14 +317,26 @@
             window.data = data;
             window.json = json
             window.d3 = d3;
-            var saftyIdx = data.getAllSafetyIdx();
+            var zip_section = data.getAllZipData();
 
             // bind each zip section with the safty index
-            data.getZip().forEach(zip => {
-                json.features.forEach((d, i) => {
-                    if (d.properties.geoid10 == zip)  json.features[i].properties.value = saftyIdx[zip];
+           
+            json.features.forEach((d, i) => {
+                var json_zip = d.properties.geoid10 ; 
+                zip_section.forEach((l,j) => {
+                    if (json_zip == l['zip']){
+                        json.features[i].properties.saftyIdx = l['safetyIndex'];
+                        json.features[i].properties.caseNum = l['numberOfCases'];
+                        json.features[i].properties.clearRate= l['clearanceRate'];
+                        json.features[i].properties.clearTime= l['clearanceTime'];
+                        // break;
+                        
+                    }
+                    
                 })
-            });
+                    
+                })
+           
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
@@ -329,6 +371,9 @@
             data.setRawData(d);
             var saftyIdx = Object.values(data.getAllSafetyIdx());
             color.domain([Math.min.apply(null, saftyIdx), Math.max.apply(null, saftyIdx)]);
+            // get all attrbute for each zip section
+            
+            
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
             });
