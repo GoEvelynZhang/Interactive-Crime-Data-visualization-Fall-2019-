@@ -17,7 +17,8 @@
     <div class="maincontainer">
         <div id="main_graph">
             <span id="SelectionNode">
-                <a> Current ZIP Zone: </a><a id="currentSelection" href="https://www.zipdatamaps.com/area-code-512" target="_blank">Austin</a>
+                <a> Current ZIP Zone: </a><a id="currentSelection" href="https://www.zipdatamaps.com/area-code-512"
+                    target="_blank">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
         </div>
@@ -34,7 +35,7 @@
     </div>
 
     <script>
-       // Main view dimension {MARKER}
+        // Main view dimension {MARKER}
         const main_height = 750;
         const main_width = 750;
         const main_margin = {
@@ -69,16 +70,16 @@
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         // main view color mapping
-        var color_range = ["#a6cfc8", "#daf8e3", "#ffca2a", "#ffa501","#ff8d00","#ff6400","#ff4400","#fc2a1c"];
+        var color_range = ["#a6cfc8", "#daf8e3", "#ffca2a", "#ffa501", "#ff8d00", "#ff6400", "#ff4400", "#fc2a1c"];
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
-        
-        
+
+
         // Define the div for the tooltip
         var div_tooltip = d3.select("#main_graph").append("div")
-                    .attr("class","tooltip")
-                    .style("opacity",0);
+            .attr("class", "tooltip")
+            .style("opacity", 0);
 
         // define draw_legend
         function draw_legend() {
@@ -99,11 +100,11 @@
                 .attr("y", 20)
                 .text("Most Crimes")
                 .attr("font-size", "20");
-            
+
             for (var i = 0; i < color_range.length; i++) {
                 main_legend.append("rect")
-                    .attr("x", 63*i+83)
-                    .attr("y", 25 )
+                    .attr("x", 63 * i + 83)
+                    .attr("y", 25)
                     .attr("width", 60)
                     .attr("height", 25)
                     .style("fill", color_range[i]);
@@ -223,10 +224,10 @@
             var w = (main_width + main_margin.left + main_margin.right) / 2;
             var h = (main_height + main_margin.top + main_margin.bottom) / 2;
             var mainProjection = d3.geoMercator()
-                .center([-97.725073, 30.287884])
+                .center([-97.725093, 30.310884])
                 .fitExtent([
                     [0, 0],
-                    [w * 1.7, h * 1.7]
+                    [w * 1.89, h * 1.89]
                 ], json)
                 .translate([w, h]);
             var mainPath = d3.geoPath().projection(mainProjection);
@@ -265,37 +266,37 @@
                 .attr("stoke-width", 1)
                 .style("fill", d => d.properties.saftyIdx ? color(d.properties.saftyIdx) : "#ccc")
                 .style("fill-opacity", 1)
-                
-                .on("mouseover", function(d){
-                    d3.select(this).style("stroke","yellow").style("stroke-width","3");
+                .on("mouseover", function (d) {
+                    d3.select(this).style("stroke", "yellow").style("stroke-width", "3");
                     // mouseover with the tooltip action
-                    if (d.properties.geoid10 && d.properties.caseNum &&d.properties.clearRate &&  d.properties.clearTime){
-                    div_tooltip.transition()
-                                .duration(200)
-                                .style("opacity",0.9);
-                                console.log("inside")
-      
-                    var html = "ZipCode:  "+ (d.properties.geoid10).toString() +"</br>"+
-                                "Crime Number:  "+ (d.properties.caseNum).toString()+"</br>"+
-                                "Clearance Rate:  " + (parseFloat(d.properties.clearRate*100).toFixed(2)+"%").toString() + "</br>"+
-                                "Clearance Time:  " + (d.properties.clearTime.toFixed(2)).toString() + " Days</br>";
-                    var xPosition = d3.mouse(this)[0] - 5;
-                    var yPosition = d3.mouse(this)[1] - 5;  
-                    div_tooltip.html(html)
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");}
-                       
+                    if (1) {
+                        div_tooltip.transition()
+                            .duration(200)
+                            .style("opacity", 0.9);
+
+                        var html = "ZipCode:  " + (d.properties.geoid10).toString() + "</br>" +
+                            "Number of cases:  " + (d.properties.caseNum).toString() + "</br>" +
+                            "Clearance Rate:  " + (parseFloat(d.properties.clearRate * 100).toFixed(2) + "%")
+                            .toString() + "</br>" +
+                            "Clearance Time:  " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2)).toString() + " Days" : "N/A") + "</br>";
+                        var xPosition = d3.mouse(this)[0] - 5;
+                        var yPosition = d3.mouse(this)[1] - 5;
+                        div_tooltip.html(html)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                    }
+
                 })
-                
-                .on("mouseout",function(d){
-                    d3.select(this).style("stroke","black").style("stroke-width","1");
+
+                .on("mouseout", function (d) {
+                    d3.select(this).style("stroke", "black").style("stroke-width", "1");
                     div_tooltip.transition()
-                                .duration(500)
-                                 .style("opacity", 0);
+                        .duration(500)
+                        .style("opacity", 0);
                 });
 
-                // .append("title")
-                // .text(d => d.properties.geoid10);
+            // .append("title")
+            // .text(d => d.properties.geoid10);
 
             main.call(zoom);
             return resetted;
@@ -320,28 +321,25 @@
             var zip_section = data.getAllZipData();
 
             // bind each zip section with the safty index
-           
+
             json.features.forEach((d, i) => {
-                var json_zip = d.properties.geoid10 ; 
-                zip_section.forEach((l,j) => {
-                    if (json_zip == l['zip']){
+                var json_zip = d.properties.geoid10;
+                zip_section.forEach((l, j) => {
+                    if (json_zip == l['zip']) {
                         json.features[i].properties.saftyIdx = l['safetyIndex'];
                         json.features[i].properties.caseNum = l['numberOfCases'];
-                        json.features[i].properties.clearRate= l['clearanceRate'];
-                        json.features[i].properties.clearTime= l['clearanceTime'];
-                        // break;
-                        
+                        json.features[i].properties.clearRate = l['clearanceRate'];
+                        json.features[i].properties.clearTime = l['clearanceTime'];
                     }
-                    
                 })
-                    
-                })
-           
+            })
+
 
             function changeZip(d) {
                 console.log(d.properties.geoid10);
                 document.getElementById("currentSelection").innerHTML = d.properties.geoid10;
-                document.getElementById("currentSelection").href = "https://www.zipdatamaps.com/" + d.properties.geoid10; 
+                document.getElementById("currentSelection").href = "https://www.zipdatamaps.com/" + d.properties
+                .geoid10;
                 updateView(left_view, d.properties.geoid10);
                 updateView(right_view, d.properties.geoid10);
             };
@@ -372,8 +370,8 @@
             var saftyIdx = Object.values(data.getAllSafetyIdx());
             color.domain([Math.min.apply(null, saftyIdx), Math.max.apply(null, saftyIdx)]);
             // get all attrbute for each zip section
-            
-            
+
+
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
             });
