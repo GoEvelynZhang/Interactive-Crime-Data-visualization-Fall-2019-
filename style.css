@@ -22,7 +22,7 @@ max-width:2000px;
     max-width:1600px;
 }
 
-h1,h2,h3 {
+h1,h2,h3,a, text {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     position: relative;
     text-align: center;
@@ -50,11 +50,9 @@ h1{
 }
 
 #SelectionNode{
-    font-size:29px;
-    position:relative;
+    position: relative;
     left: 400px;
-    font-size: 30px;
-
+    font-size: 28px;
 }
 
 #currentSelection{
@@ -63,8 +61,8 @@ h1{
 
 #restore{
     position:relative;
-    left:790px;
-    top :750px;
+    left:700px;
+    top :760px;
     font-size:20px;
     cursor: pointer;
     color: #fff;
