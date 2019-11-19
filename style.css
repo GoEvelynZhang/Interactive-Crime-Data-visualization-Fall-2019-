@@ -10,16 +10,20 @@ max-width:2100px;
 #main_graph,
 #sub_graphs {
     display: inline-block;
-    border-width: 1px;
     position: absolute;
     top:0px;
-    border-style: solid;
     height:879px;
 }
 
+#sub_graphs {
+    border-right: 1px solid;
+}
+
 #main_graph {
+    border-style: solid;
     min-width:1600px;
     max-width:1600px;
+    border-radius: 20px;
 }
 
 #main_graph svg {
@@ -103,7 +107,7 @@ h1{
     padding-bottom:20px;
     padding-right: 15px;
     padding-left: 20px;
-    width:210px;
+    width:260px;
     text-align: left;
     font-size: 18px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
