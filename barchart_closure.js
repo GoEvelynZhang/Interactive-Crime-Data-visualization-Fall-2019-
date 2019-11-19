@@ -16,6 +16,13 @@ function barChart() {
     xSl = xScale;
     ySl = yScale;
     attr = attributes[6]*/
+    var barSelected = function(d) {
+        d3.select(this).style("stroke", "red").style("stroke-width", "3");
+    };
+
+    var barRestored = function(d) {
+        d3.select(this).style("stroke", "red").style("stroke-width", "0");
+    };
 
     function chart(selection) {
         // check point: console.log(selection);
@@ -36,6 +43,8 @@ function barChart() {
                 .attr("height", function (d) {
                     return ht - ySl(d[zip]);
                 })
+                .on("mouseover", barSelected)
+                .on("mouseout", barRestored)
                 .append("title")
                   .text(d => d[zip]);
         });

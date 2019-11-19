@@ -47,7 +47,7 @@
 
         // Sub view dimension
         const sec_height = 350;
-        const sec_width = 350;
+        const sec_width = 380;
         const sec_margin = {
             "top": 12,
             "bottom": 12,
@@ -59,11 +59,9 @@
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         var main_legend = d3.select("#main_graph").append("svg")
-            .attr("transform", "translate(0,800)")
-            .attr("width", 600)
-            .attr("height", 70);
+            .attr("id", "legend");
         var main = d3.select("#main_graph").append("svg")
-            .attr("transform", "translate(750,-80)")
+            .attr("id", "map")
             .attr("width", main_width + main_margin.left + main_margin.right)
             .attr("height", main_height + main_margin.top + main_margin.bottom);
         var time_graph = d3.select("#time_series_graph").append("svg")
@@ -74,7 +72,7 @@
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
-        var selected = function (d) {
+        var mainSelected = function (d) {
             d3.select(this).style("stroke", "yellow").style("stroke-width", "3");
             // mouseover with the tooltip action
             div_tooltip.transition()
@@ -93,7 +91,7 @@
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px");
         };
-        var restored = function (d) {
+        var mainRestored = function (d) {
             d3.select(this).style("stroke-width", "0");
             div_tooltip.transition()
             .duration(500)
@@ -301,8 +299,8 @@
                 .attr("class", "highLight")
                 .attr("stoke-width", 0)
                 .style("fill-opacity", 0)
-                .on("mouseover", selected)
-                .on("mouseout", restored);
+                .on("mouseover", mainSelected)
+                .on("mouseout", mainRestored);
 
             main.call(zoom);
             return resetted;
