@@ -21,6 +21,16 @@
                     target="_blank">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
+            <img id = "manual_icon" src="https://img.icons8.com/office/16/000000/user-manual.png">
+            <!-- <a id = "manual_icon" href="https://icons8.com/icon/21440/user-manual">User Manual</a> -->
+            <div id = "functionality_discription">
+                <h4>Click on Regions to Explore regional features </h4>
+                <h4>Click Restore for Austin Infor as a whole</h4>
+                <h4>Hover over Regions to explore detailed infor </h4>
+                <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
+                <h4>Zoom & Pan on map to inspect certain regions </h4>
+                <h4>Click on Zip Zone for Reigional Specifics</h4>
+            </div>
         </div>
         <div id="sub_graphs">
 
@@ -33,7 +43,20 @@
             </div>
         </div>
     </div>
+    <!-- the manual discription when click -->
+    <script>
+        document.getElementById("manual_icon").onmouseover = manual_enable;
+        document.getElementById("manual_icon").onmouseout = manual_disable;
+        function manual_disable(){
+            document.getElementById("functionality_discription").style.opacity = 0;
 
+        }
+        function manual_enable(){
+            document.getElementById("functionality_discription").style.opacity = 1;
+
+        }
+    </script>
+    
     <script>
         // Main view dimension {MARKER}
         const main_height = 850;
@@ -88,7 +111,7 @@
             var xPosition = d3.mouse(this)[0] - 5;
             var yPosition = d3.mouse(this)[1] - 5;
             div_tooltip.html(html)
-            .style("left", (d3.event.pageX) + "px")
+            .style("left", (d3.event.pageX-500) + "px")
             .style("top", (d3.event.pageY - 28) + "px");
         };
         var mainRestored = function (d) {
