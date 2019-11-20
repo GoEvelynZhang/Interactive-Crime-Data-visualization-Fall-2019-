@@ -110,8 +110,8 @@
             var xPosition = d3.mouse(this)[0] - 5;
             var yPosition = d3.mouse(this)[1] - 5;
             div_tooltip.html(html)
-            .style("left", (d3.event.pageX-500) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
+            .style("left", (d3.event.pageX+20) + "px")
+            .style("top", (d3.event.pageY - 20) + "px");
         };
         var mainRestored = function (d) {
             d3.select(this).style("stroke-width", "0");
