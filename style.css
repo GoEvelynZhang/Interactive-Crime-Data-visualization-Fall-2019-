@@ -136,7 +136,7 @@ h1{
     position:relative;
     left:1400px;
     top:20px;
-    background-color:lightsteelblue;
+    background-color:rgba(176,196,222, 0.4);
     border-radius: 8px;
 }
 

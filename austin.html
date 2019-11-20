@@ -90,12 +90,12 @@
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         // main view color mapping
-        var color_range = ["#a6cfc8", "#daf8e3", "#ffca2a", "#ffa501", "#ff8d00", "#ff6400", "#ff4400", "#fc2a1c"];
+        var color_range = ["FFFEB9","FFEB64", "#ffca2a", "#ffa501", "#ff8d00", "#ff6400", "#ff4400", "#fc2a1c"];
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
         var mainSelected = function (d) {
-            d3.select(this).style("stroke", "yellow").style("stroke-width", "3");
+            d3.select(this).style("stroke", "blue").style("stroke-width", "3");
             // mouseover with the tooltip action
             div_tooltip.transition()
             .duration(200)
@@ -110,8 +110,8 @@
             var xPosition = d3.mouse(this)[0] - 5;
             var yPosition = d3.mouse(this)[1] - 5;
             div_tooltip.html(html)
-            .style("left", (d3.event.pageX-500) + "px")
-            .style("top", (d3.event.pageY - 28) + "px");
+            .style("left", (d3.event.pageX-300) + "px")
+            .style("top", (d3.event.pageY ) + "px");
         };
         var mainRestored = function (d) {
             d3.select(this).style("stroke-width", "0");
