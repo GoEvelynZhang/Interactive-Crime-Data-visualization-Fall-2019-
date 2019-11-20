@@ -21,8 +21,7 @@
                     target="_blank">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
-            <img id = "manual_icon" src="https://img.icons8.com/office/16/000000/user-manual.png">
-            <!-- <a id = "manual_icon" href="https://icons8.com/icon/21440/user-manual">User Manual</a> -->
+            <img id = "manual_icon" src="https://icon-library.net//images/user-manual-icon/user-manual-icon-8.jpg">
             <div id = "functionality_discription">
                 <h4>Click on Regions to Explore regional features </h4>
                 <h4>Click Restore for Austin Infor as a whole</h4>
@@ -390,9 +389,6 @@
             data.setRawData(d);
             var saftyIdx = Object.values(data.getAllSafetyIdx());
             color.domain([Math.min.apply(null, saftyIdx), Math.max.apply(null, saftyIdx)]);
-            // get all attrbute for each zip section
-
-
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
             });
