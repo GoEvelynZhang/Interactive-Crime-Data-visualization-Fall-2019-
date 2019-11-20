@@ -38,8 +38,10 @@ svg#legend {
 }
 
 svg#map {
-    top: 5px;
+    top: 4px;
     left: 826px;
+    border-radius: 20px;
+    border-width: 3px;
 }
 
 h1,h2,h3,a, text {
