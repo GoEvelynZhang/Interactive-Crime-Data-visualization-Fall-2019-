@@ -25,8 +25,8 @@ max-width:2100px;
 
 #main_graph {
     border-style: solid;
-    min-width:1600px;
-    max-width:1600px;
+    min-width:1900px;
+    max-width:1900px;
     border-radius: 20px;
 }
 
@@ -38,12 +38,12 @@ svg#legend {
     width: 600px;
     height: 70px;
     top: 800px;
-    left: 450px;
+    left: 390px;
 }
 
 svg#map {
     top: 4px;
-    left: 826px;
+    left: 1026px;
     border-radius: 20px;
     border-width: 3px;
 }
@@ -87,8 +87,8 @@ h1{
 
 #restore{
     position: absolute;
-    left:700px;
-    top :750px;
+    left:420px;
+    top :0px;
     font-size:20px;
     cursor: pointer;
     color: #fff;

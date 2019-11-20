@@ -36,8 +36,8 @@
 
     <script>
         // Main view dimension {MARKER}
-        const main_height = 750;
-        const main_width = 750;
+        const main_height = 850;
+        const main_width = 850;
         const main_margin = {
             "top": 10,
             "bottom": 10,
@@ -106,16 +106,10 @@
         // define draw_legend
         function draw_legend() {
             // draw the color legend
-            main_legend.append("rect")
-                .attr("x", 20)
-                .attr("y", 25)
-                .attr("width", 60)
-                .attr("height", 25)
-                .style("fill", "#ccc");
             main_legend.append("text")
-                .attr("x", 0)
+                .attr("x", 35)
                 .attr("y", 20)
-                .text("No Crime")
+                .text("Least Crimes")
                 .attr("font-size", "20");
             main_legend.append("text")
                 .attr("x", 480)
