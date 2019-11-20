@@ -16,6 +16,10 @@ max-width:2100px;
 }
 
 #sub_graphs {
+    top:3px;
+}
+
+#sub_graphs {
     border-right: 1px solid;
 }
 
