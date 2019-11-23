@@ -57,6 +57,13 @@ h1,h2,h3,a, text {
 h1{
     font-size: 45px;
 }
+h2{
+    font-size:35px;
+}
+#subtitle2{
+position:relative;
+top:980px;
+}
 
 .bar {
     fill: skyblue;
@@ -136,7 +143,60 @@ h1{
     position:relative;
     left:1400px;
     top:20px;
-    background-color:lightsteelblue;
+    background-color:rgba(176,196,222, 0.4);
     border-radius: 8px;
 }
+#statistical_graph,#selection_zone{
+    display:inline-block;
+}
+.secondcontainer{
+    position:relative;
+    top:1000px;
+    border:solid black;
+    border-radius:10px;
+    width :1200px;
+    min-width: 1900px;
+    max-width: 1900px;
+    border-radius: 20px;
+    left:6%;
+}
+#selection_zone{
+    position:relative;
+    top:-100px;
+    left:200px;
+}
+#selection_zone::before{
+    content: ">>";
+  font-family: FontAwesome;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20%;
+  height: 100%;
+  text-align: center;
+  font-size: 28px;
+  line-height: 45px;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+#selection_zone:hover::before{
+     color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+#select_choice{
+    background-color: #52dcf7;
+    color: white;
+    padding: 12px;
+    width: 250px;
+    border: none;
+    font-size: 20px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    -webkit-appearance: button;
+    appearance: button;
+    outline: none; 
+}
+
+
 
