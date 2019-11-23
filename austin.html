@@ -13,7 +13,8 @@
 </head>
 
 <body>
-    <h1>Austin Criminal Analytical Map</h1>
+    <h1>Austien Crime Interactive Analytics</h1>
+    <h2>Austin Criminal Exploring Map</h2>
     <div class="maincontainer">
         <div id="main_graph">
             <span id="SelectionNode">
@@ -42,6 +43,22 @@
             </div>
         </div>
     </div>
+    <h2 id = "subtitle2">Austin criminal Statistics</h2>
+    <div class = "secondcontainer">
+        <div id = "statistical_graph">
+
+        </div>
+        <div id = "selection_zone">
+            <select id = "select_choice">
+                <option value="clearanceRate">Clearance Rate</option>
+                <option value="clearanceTime">Clearance Time</option>
+                <option value="numberOfCases" selected>Number of Cases</option>
+                
+                </select>
+        </div>
+
+    </div>
+
     <!-- the manual discription when click -->
     <script>
         document.getElementById("manual_icon").onmouseover = manual_enable;
@@ -103,8 +120,8 @@
 
             var html = "ZipCode: " + (d.properties.geoid10).toString() + "</br>" +
             "Number of cases: " + (d.properties.caseNum).toString() + "</br>" +
-            "Clearance Rate: " + (parseFloat(d.properties.clearRate * 100).toFixed(2) + "%")
-            .toString() + "</br>" +
+            "Clearance Rate: " + ((parseFloat(d.properties.clearRate)!=0) ? parseFloat(d.properties.clearRate * 100).toFixed(2) + "%" 
+            .toString(): "N/A") + "</br>" +
             "AVG Clearance Time: " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2)).toString() + " Days" :
             "N/A") + "</br>";
             var xPosition = d3.mouse(this)[0] - 5;
@@ -382,6 +399,123 @@
             document.getElementById("restore").onclick = restore;
 
         }
+        // #get the secondary statistic graph
+        function draw_statistics(data_clearance){
+            var stats_width = 900;
+            var stats_height = 700;
+            var stats_margin = {"left":50,"right":50,"top":60,"bottom":40};
+            var select_value = document.getElementById("select_choice").values;
+            var statistics_graph = d3.select("#statistical_graph")
+                                    .append("svg")
+                                        .attr("width",stats_width+stats_margin.left + stats_margin.right)
+                                        .attr("height",stats_height + stats_margin.top+stats_margin.bottom)
+                                    .append("g")
+                                        .attr("transform","translate("+stats_margin.left+","+stats_margin.top+")");
+            var x = d3.scaleLinear()
+                    .range([0,stats_width]);
+            var y = d3.scaleBand()
+                    .range([stats_height,0]);
+            var yAxis = d3.axisLeft(y);
+            data_clearance.sort(function(a,b){
+                return a.numberOfCases - b.numberOfCases;
+            });
+          
+            var select_data = data_clearance.slice(-10,-1);
+            console.log(select_data);
+        x.domain([0,d3.max(select_data,function(d){return d.numberOfCases;})]);
+         y.domain(select_data.map(function(d){return d.zip;})).paddingInner(0.2);
+        var x_axis = statistics_graph.append("g")
+                    .attr("class","x axis")
+                    .attr("transform","translate(0,"+stats_height+")")
+                    .call(d3.axisBottom(x));
+
+        var x_title =statistics_graph
+                    .append("text")
+                    .text("numberOfCases")
+                    .attr("transform","translate("+(stats_width)+","+(stats_height-10)+")")
+                    .style("font-size", 20)
+                    .style("text-anchor", "end");
+        var y_title = statistics_graph
+                    .append("text")
+                    .text("Zip")
+                    .attr("transform","translate(0,"+(-20)+")")
+                    .style("font-size", 20);
+
+
+
+
+        var y_axis = statistics_graph.append("g")
+                    .attr("class","y axis")
+                    .call(yAxis);
+        statistics_graph.selectAll(".bar")
+                    .data(select_data)
+                    .enter()
+                    .append("rect")
+                    .attr("class","bar")
+                    .attr("x",0)
+                    .attr("height",y.bandwidth())
+                    .attr("y",function(d){return y(d.zip);})
+                    .attr("width",function(d){return x(d.numberOfCases);})
+                        .on("mouseover",function(d){
+                            d3.select(this)
+                                .attr("stroke","red")
+                                .attr("stroke-width",3)
+                        })
+                        .on("mouseout",function(d){
+                            d3.select(this)
+                                .attr("stroke","rgb(255,255,255)")
+                                .attr("stroke-width",0);
+                        })
+                        .append("title")
+                        .text(function(d){return d.numberOfCases;});
+                
+
+        
+            // on_selection change update the graph
+           
+           
+        document.getElementById("select_choice").onchange = update_stats_graph;
+       function update_stats_graph(){
+        var e = document.getElementById("select_choice");
+        var strUser = e.options[e.selectedIndex].value;
+       
+        data_clearance.sort(function(a,b){
+           
+                return a[strUser] - b[strUser];
+            });
+        var select_data = data_clearance.slice(-10,-1);
+        x.domain([0,d3.max(select_data,function(d){return d[strUser];})]);
+         y.domain(select_data.map(function(d){return d.zip;}));
+       
+        var yAxis = d3.axisLeft(y);
+        x_axis
+            .transition()
+            .delay(function(d,i){return 100*i;})
+            .duration(1000)
+            .call(d3.axisBottom(x));
+        y_axis
+            .transition()
+            .delay(function(d,i){return 100*i;})
+            .duration(1000)
+            .call(yAxis);
+        x_title.text(strUser.toString());
+        var change_graph = statistics_graph.selectAll(".bar")
+               .data(select_data);
+        change_graph.transition()
+                    .delay(function(d,i){return 100*i;})
+                    .duration(1000)
+                    .attr("x",0)
+                    .attr("height",y.bandwidth())
+                    .attr("y",function(d){return y(d.zip);})
+                    .attr("width",function(d){return x(d[strUser]);});
+       change_graph.select("title")           // .append("title")
+                    .data(select_data)
+                    .text(function(d){return d[strUser];});
+        
+
+    }
+
+        }
 
         // draw the main map in the center
         d3.csv("processed_data.csv", function (d) {
@@ -392,6 +526,10 @@
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
             });
+
+            
+            draw_statistics(data.getAllZipData());
+
         });
     </script>
 </body>
