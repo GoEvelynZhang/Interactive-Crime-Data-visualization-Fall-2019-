@@ -433,7 +433,7 @@
             })).paddingInner(0.2);
             var x_axis = statistics_graph.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + -10 + ")")
+                .attr("transform", "translate(10," + -10 + ")")
 
             x_axis.call(d3.axisTop(x));
             var x_title = x_axis.append("text")
