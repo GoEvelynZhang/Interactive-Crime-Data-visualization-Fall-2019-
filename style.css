@@ -42,8 +42,9 @@ svg#legend {
 }
 
 svg#map {
-    top: 4px;
+    top: 5px;
     left: 420px;
+    background-color: rgba(71, 67, 55, 0.247);
     border-radius: 20px;
     border-width: 3px;
 }
