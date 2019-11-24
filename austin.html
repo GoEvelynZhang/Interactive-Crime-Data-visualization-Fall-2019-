@@ -22,14 +22,15 @@
                     target="_blank">Austin</a>
                 <button id="restore" type="button">Restore</button>
             </span>
-            <img id = "manual_icon" src="https://icon-library.net//images/user-manual-icon/user-manual-icon-8.jpg">
-            <div id = "functionality_discription">
-                <h4>Click on Regions to Explore regional features </h4>
-                <h4>Click Restore for Austin Infor as a whole</h4>
-                <h4>Hover over Regions to explore detailed infor </h4>
-                <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
-                <h4>Zoom & Pan on map to inspect certain regions </h4>
-                <h4>Click on Zip Zone for Reigional Specifics</h4>
+            <img id="manual_icon" src="https://icon-library.net//images/user-manual-icon/user-manual-icon-8.jpg">
+
+            <div id="statistical_graph"></div>
+            <div id="selection_zone">
+                <select id="select_choice">
+                    <option value="clearanceRate">Clearance Rate</option>
+                    <option value="clearanceTime">Clearance Time</option>
+                    <option value="numberOfCases" selected>Number of Cases</option>
+                </select>
             </div>
         </div>
         <div id="sub_graphs">
@@ -43,36 +44,29 @@
             </div>
         </div>
     </div>
-    <h2 id = "subtitle2">Austin criminal Statistics</h2>
-    <div class = "secondcontainer">
-        <div id = "statistical_graph">
-
-        </div>
-        <div id = "selection_zone">
-            <select id = "select_choice">
-                <option value="clearanceRate">Clearance Rate</option>
-                <option value="clearanceTime">Clearance Time</option>
-                <option value="numberOfCases" selected>Number of Cases</option>
-                
-                </select>
-        </div>
-
-    </div>
 
     <!-- the manual discription when click -->
     <script>
+        const manual = `            <div id="functionality_discription">
+                <h4>Click on Regions to Explore regional features </h4>
+                <h4>Click Restore for Austin Infor as a whole</h4>
+                <h4>Hover over Regions to explore detailed infor </h4>
+                <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
+                <h4>Zoom & Pan on map to inspect certain regions </h4>
+                <h4>Click on Zip Zone for Reigional Specifics</h4>
+            </div>`;
         document.getElementById("manual_icon").onmouseover = manual_enable;
         document.getElementById("manual_icon").onmouseout = manual_disable;
-        function manual_disable(){
-            document.getElementById("functionality_discription").style.opacity = 0;
 
+        function manual_disable() {
+            document.getElementById("functionality_discription").remove();
         }
-        function manual_enable(){
-            document.getElementById("functionality_discription").style.opacity = 1;
 
+        function manual_enable() {
+            document.getElementById("main_graph").insertAdjacentHTML('beforeend', manual);
         }
     </script>
-    
+
     <script>
         // Main view dimension {MARKER}
         const main_height = 850;
@@ -107,7 +101,7 @@
             .attr("width", sec_width + sec_margin.left + sec_margin.right)
             .attr("height", sec_height + sec_margin.top + sec_margin.bottom);
         // main view color mapping
-        var color_range = ["FFFEB9","FFEB64", "#ffca2a", "#ffa501", "#ff8d00", "#ff6400", "#ff4400", "#fc2a1c"];
+        var color_range = ["FFFEB9", "FFEB64", "#ffca2a", "#ffa501", "#ff8d00", "#ff6400", "#ff4400", "#fc2a1c"];
         // var index_note = ["Little Crimes", "Some Crimes", "Many Crimes", "Lots of Crimes"];
         var color = d3.scaleQuantize().range(color_range);
         // color changed when selected
@@ -115,26 +109,28 @@
             d3.select(this).style("stroke", "blue").style("stroke-width", "3");
             // mouseover with the tooltip action
             div_tooltip.transition()
-            .duration(200)
-            .style("opacity", 0.9);
+                .duration(200)
+                .style("opacity", 0.9);
 
             var html = "ZipCode: " + (d.properties.geoid10).toString() + "</br>" +
-            "Number of cases: " + (d.properties.caseNum).toString() + "</br>" +
-            "Clearance Rate: " + ((parseFloat(d.properties.clearRate)!=0) ? parseFloat(d.properties.clearRate * 100).toFixed(2) + "%" 
-            .toString(): "N/A") + "</br>" +
-            "AVG Clearance Time: " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2)).toString() + " Days" :
-            "N/A") + "</br>";
+                "Number of cases: " + (d.properties.caseNum).toString() + "</br>" +
+                "Clearance Rate: " + ((parseFloat(d.properties.clearRate) != 0) ? parseFloat(d.properties
+                        .clearRate * 100).toFixed(2) + "%"
+                    .toString() : "N/A") + "</br>" +
+                "AVG Clearance Time: " + ((d.properties.clearTime) ? (d.properties.clearTime.toFixed(2))
+                    .toString() + " Days" :
+                    "N/A") + "</br>";
             var xPosition = d3.mouse(this)[0] - 5;
             var yPosition = d3.mouse(this)[1] - 5;
             div_tooltip.html(html)
-            .style("left", (d3.event.pageX-300) + "px")
-            .style("top", (d3.event.pageY ) + "px");
+                .style("left", (d3.event.pageX - 300) + "px")
+                .style("top", (d3.event.pageY) + "px");
         };
         var mainRestored = function (d) {
             d3.select(this).style("stroke-width", "0");
             div_tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
+                .duration(500)
+                .style("opacity", 0);
         };
 
         // Define the div for the tooltip
@@ -330,6 +326,7 @@
                 .append("path")
                 .attr("d", mainPath)
                 .attr("class", "highLight")
+                .attr("id", d => "z"+d.properties.geoid10)
                 .attr("stoke-width", 0)
                 .style("fill-opacity", 0)
                 .on("mouseover", mainSelected)
@@ -376,7 +373,7 @@
                 console.log(d.properties.geoid10);
                 document.getElementById("currentSelection").innerHTML = d.properties.geoid10;
                 document.getElementById("currentSelection").href = "https://www.zipdatamaps.com/" + d.properties
-                .geoid10;
+                    .geoid10;
                 updateView(left_view, d.properties.geoid10);
                 updateView(right_view, d.properties.geoid10);
             };
@@ -385,6 +382,7 @@
             var right_view = draw_time_view(data);
             var resetted = draw_main_view(json);
             var legend_view = draw_legend();
+            draw_statistics(data.getAllZipData());
             main.selectAll(".highLight").on("click", changeZip);
 
             function restore() {
@@ -399,122 +397,146 @@
             document.getElementById("restore").onclick = restore;
 
         }
-        // #get the secondary statistic graph
-        function draw_statistics(data_clearance){
-            var stats_width = 900;
-            var stats_height = 700;
-            var stats_margin = {"left":50,"right":50,"top":60,"bottom":40};
+
+        // get the secondary statistic graph
+        function draw_statistics(data_clearance) {
+            var stats_width = 500;
+            var stats_height = 2000;
+            var stats_margin = {
+                "left": 50,
+                "right": 20,
+                "top": 50,
+                "bottom": 20
+            };
             var select_value = document.getElementById("select_choice").values;
             var statistics_graph = d3.select("#statistical_graph")
-                                    .append("svg")
-                                        .attr("width",stats_width+stats_margin.left + stats_margin.right)
-                                        .attr("height",stats_height + stats_margin.top+stats_margin.bottom)
-                                    .append("g")
-                                        .attr("transform","translate("+stats_margin.left+","+stats_margin.top+")");
+                .append("svg")
+                .attr("width", stats_width + stats_margin.left + stats_margin.right)
+                .attr("height", stats_height + stats_margin.top + stats_margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + stats_margin.left + "," + stats_margin.top + ")");
             var x = d3.scaleLinear()
-                    .range([0,stats_width]);
+                .range([0, stats_width]);
             var y = d3.scaleBand()
-                    .range([stats_height,0]);
-            var yAxis = d3.axisLeft(y);
-            data_clearance.sort(function(a,b){
+                .range([stats_height, 0]);
+            var yAxis = d3.axisLeft(y).tickSizeOuter(0);
+            data_clearance.sort(function (a, b) {
                 return a.numberOfCases - b.numberOfCases;
             });
-          
-            var select_data = data_clearance.slice(-10,-1);
-            console.log(select_data);
-        x.domain([0,d3.max(select_data,function(d){return d.numberOfCases;})]);
-         y.domain(select_data.map(function(d){return d.zip;})).paddingInner(0.2);
-        var x_axis = statistics_graph.append("g")
-                    .attr("class","x axis")
-                    .attr("transform","translate(0,"+stats_height+")")
-                    .call(d3.axisBottom(x));
 
-        var x_title =statistics_graph
-                    .append("text")
-                    .text("numberOfCases")
-                    .attr("transform","translate("+(stats_width)+","+(stats_height-10)+")")
-                    .style("font-size", 20)
-                    .style("text-anchor", "end");
-        var y_title = statistics_graph
-                    .append("text")
-                    .text("Zip")
-                    .attr("transform","translate(0,"+(-20)+")")
-                    .style("font-size", 20);
+            var select_data = data_clearance;
+            x.domain([0, d3.max(select_data, function (d) {
+                return d.numberOfCases;
+            })]);
+            y.domain(select_data.map(function (d) {
+                return d.zip;
+            })).paddingInner(0.2);
+            var x_axis = statistics_graph.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + -10 + ")")
 
+            x_axis.call(d3.axisTop(x));
+            var x_title = x_axis.append("text")
+                .text("numberOfCases")
+                .attr("id", "xTitle")
+                .attr("transform", "translate(" + stats_margin.left + "," + -20 + ")")
+                .style("font-size", 10)
+                .style("fill", "#000")
+                .style("text-anchor", "end");
 
+            var y_axis = statistics_graph.append("g")
+                .attr("transform", "translate(-5,0)")
+                .attr("class", "y_axis")
+                .call(yAxis);
 
+            statistics_graph.selectAll(".bar")
+                .data(select_data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", 0)
+                .attr("height", y.bandwidth())
+                .attr("y", function (d) {
+                    return y(d.zip);
+                })
+                .attr("width", function (d) {
+                    return x(d.numberOfCases);
+                })
+                .on("mouseover", function (d) {
+                    d3.select(this)
+                        .attr("stroke", "red")
+                        .attr("stroke-width", 3);
 
-        var y_axis = statistics_graph.append("g")
-                    .attr("class","y axis")
-                    .call(yAxis);
-        statistics_graph.selectAll(".bar")
-                    .data(select_data)
-                    .enter()
-                    .append("rect")
-                    .attr("class","bar")
-                    .attr("x",0)
-                    .attr("height",y.bandwidth())
-                    .attr("y",function(d){return y(d.zip);})
-                    .attr("width",function(d){return x(d.numberOfCases);})
-                        .on("mouseover",function(d){
-                            d3.select(this)
-                                .attr("stroke","red")
-                                .attr("stroke-width",3)
-                        })
-                        .on("mouseout",function(d){
-                            d3.select(this)
-                                .attr("stroke","rgb(255,255,255)")
-                                .attr("stroke-width",0);
-                        })
-                        .append("title")
-                        .text(function(d){return d.numberOfCases;});
-                
+                    d3.select(".highLight#z"+d.zip).style("stroke", "blue").style("stroke-width", "5");
+                })
+                .on("mouseout", function (d) {
+                    d3.select(this)
+                        .attr("stroke", "rgb(255,255,255)")
+                        .attr("stroke-width", 0);
 
-        
+                    d3.select(".highLight#z"+d.zip).style("stroke-width", "0");
+                })
+                .append("title")
+                .text(function (d) {
+                    return d.numberOfCases;
+                });
+
             // on_selection change update the graph
-           
-           
-        document.getElementById("select_choice").onchange = update_stats_graph;
-       function update_stats_graph(){
-        var e = document.getElementById("select_choice");
-        var strUser = e.options[e.selectedIndex].value;
-       
-        data_clearance.sort(function(a,b){
-           
-                return a[strUser] - b[strUser];
-            });
-        var select_data = data_clearance.slice(-10,-1);
-        x.domain([0,d3.max(select_data,function(d){return d[strUser];})]);
-         y.domain(select_data.map(function(d){return d.zip;}));
-       
-        var yAxis = d3.axisLeft(y);
-        x_axis
-            .transition()
-            .delay(function(d,i){return 100*i;})
-            .duration(1000)
-            .call(d3.axisBottom(x));
-        y_axis
-            .transition()
-            .delay(function(d,i){return 100*i;})
-            .duration(1000)
-            .call(yAxis);
-        x_title.text(strUser.toString());
-        var change_graph = statistics_graph.selectAll(".bar")
-               .data(select_data);
-        change_graph.transition()
-                    .delay(function(d,i){return 100*i;})
+            document.getElementById("select_choice").onchange = update_stats_graph;
+
+            function update_stats_graph() {
+                var e = document.getElementById("select_choice");
+                var strUser = e.options[e.selectedIndex].value;
+
+                data_clearance.sort(function (a, b) {
+
+                    return a[strUser] - b[strUser];
+                });
+                var select_data = data_clearance;
+                x.domain([0, d3.max(select_data, function (d) {
+                    return d[strUser];
+                })]);
+                y.domain(select_data.map(function (d) {
+                    return d.zip;
+                }));
+
+                var yAxis = d3.axisLeft(y).tickSizeOuter(0);
+                x_axis
+                    .transition()
+                    .delay(function (d, i) {
+                        return 19 * i;
+                    })
                     .duration(1000)
-                    .attr("x",0)
-                    .attr("height",y.bandwidth())
-                    .attr("y",function(d){return y(d.zip);})
-                    .attr("width",function(d){return x(d[strUser]);});
-       change_graph.select("title")           // .append("title")
+                    .call(d3.axisTop(x));
+                y_axis
+                    .transition()
+                    .delay(function (d, i) {
+                        return 19 * i;
+                    })
+                    .duration(1000)
+                    .call(yAxis);
+                x_title.text(strUser.toString());
+                var change_graph = statistics_graph.selectAll(".bar")
+                    .data(select_data);
+                change_graph.transition()
+                    .delay(function (d, i) {
+                        return 19 * i;
+                    })
+                    .duration(1000)
+                    .attr("x", 0)
+                    .attr("height", y.bandwidth())
+                    .attr("y", function (d) {
+                        return y(d.zip);
+                    })
+                    .attr("width", function (d) {
+                        return x(d[strUser]);
+                    });
+                change_graph.select("title")
                     .data(select_data)
-                    .text(function(d){return d[strUser];});
-        
-
-    }
-
+                    .text(function (d) {
+                        return d[strUser];
+                    });
+            }
         }
 
         // draw the main map in the center
@@ -526,10 +548,6 @@
             d3.json("Boundaries_Zip.geojson", function (json) {
                 draw(data, json);
             });
-
-            
-            draw_statistics(data.getAllZipData());
-
         });
     </script>
 </body>

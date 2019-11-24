@@ -127,43 +127,43 @@ top:980px;
     position: absolute;
 }
 #manual_icon{
-    width:80px;
-    height: 80px;
+    width:50px;
+    height: 50px;
     position:relative;
-    left: 1600px;
-    top: 450px;
+    left: 1800px;
+    top: 700px;
 }
 #functionality_discription{
-    opacity:0;
+    opacity:1;
     width: 460px;
     padding-top:20px;
     padding-bottom:20px;
     padding-right: 5px;
     padding-left: 20px;
     position:relative;
-    left:1400px;
-    top:20px;
-    background-color:rgba(176,196,222, 0.4);
+    left:1300px;
+    top:300px;
+    background-color:rgba(176,196,222, 0.95);
     border-radius: 8px;
 }
-#statistical_graph,#selection_zone{
+#statistical_graph, #selection_zone{
+    position: absolute;
     display:inline-block;
 }
-.secondcontainer{
-    position:relative;
-    top:1000px;
-    border:solid black;
-    border-radius:10px;
-    width :1200px;
-    min-width: 1900px;
-    max-width: 1900px;
-    border-radius: 20px;
-    left:6%;
+
+#statistical_graph{
+    border-color: lightblue;
+    left:1300px;
+    top:100px;
+    border-width: 1px;
+    height:600px;
+    width:580px;
+    overflow:auto;
 }
+
 #selection_zone{
-    position:relative;
-    top:-100px;
-    left:200px;
+    top: 720px;
+    left:1350px;
 }
 #selection_zone::before{
     content: ">>";
