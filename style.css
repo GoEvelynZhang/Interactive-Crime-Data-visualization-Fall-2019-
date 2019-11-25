@@ -3,8 +3,7 @@
 top:0px;
 padding-top:0;
 margin:auto; position:relative;
-min-width:2100px;
-max-width:2100px;
+width: 1912px;
 }
 
 #main_graph,
@@ -17,6 +16,7 @@ max-width:2100px;
 
 #sub_graphs {
     top:3px;
+    position: relative;
 }
 
 #sub_graphs {
@@ -128,23 +128,27 @@ top:980px;
     position: absolute;
 }
 #manual_icon{
+    cursor: pointer;
     width:50px;
     height: 50px;
-    position:relative;
+    position: absolute;
     left: 1800px;
     top: 700px;
+    z-index: 100;
 }
 #functionality_discription{
+    font-family: Helvetica, sans-serif;
+    color: white;
     opacity:1;
     width: 460px;
     padding-top:20px;
     padding-bottom:20px;
-    padding-right: 5px;
-    padding-left: 20px;
+    padding-right: 30px;
+    padding-left: 70px;
     position:relative;
-    left:1300px;
+    left:1320px;
     top:300px;
-    background-color:rgba(176,196,222, 0.95);
+    background-color:rgba(0,0,0,0.6);
     border-radius: 8px;
 }
 #statistical_graph, #selection_zone{
@@ -167,8 +171,8 @@ top:980px;
     left:1350px;
 }
 #selection_zone::before{
-    content: ">>";
-  font-family: FontAwesome;
+  content: "";
+  font-family: 'Font Awesome 5 Free';
   position: absolute;
   top: 0;
   right: 0;
@@ -193,11 +197,24 @@ top:980px;
     width: 250px;
     border: none;
     font-size: 20px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     -webkit-appearance: button;
     appearance: button;
     outline: none; 
 }
 
+#main_mask {
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 50;
+    position: absolute;
+    opacity: 0;
+    user-select: none;
+    pointer-events: none;
+    transition: .1s linear;
+}
 
-
+#main_mask.show {
+    opacity: 1;
+}

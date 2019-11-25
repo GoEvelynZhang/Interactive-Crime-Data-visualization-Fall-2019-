@@ -9,6 +9,7 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.13.0/d3-legend.js"></script>
+    <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -25,12 +26,22 @@
             <img id="manual_icon" src="https://icon-library.net//images/user-manual-icon/user-manual-icon-8.jpg">
 
             <div id="statistical_graph"></div>
-            <div id="selection_zone">
+            <div id="selection_zone" class="fa fa-angle-down">
                 <select id="select_choice">
                     <option value="clearanceRate">Clearance Rate</option>
                     <option value="clearanceTime">Clearance Time</option>
                     <option value="numberOfCases" selected>Number of Cases</option>
                 </select>
+            </div>
+            <div id="main_mask">
+                <div id="functionality_discription">
+                    <h4>Click on Regions to Explore regional features </h4>
+                    <h4>Click Restore for Austin Infor as a whole</h4>
+                    <h4>Hover over Regions to explore detailed infor </h4>
+                    <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
+                    <h4>Zoom & Pan on map to inspect certain regions </h4>
+                    <h4>Click on Zip Zone for Reigional Specifics</h4>
+                </div>
             </div>
         </div>
         <div id="sub_graphs">
@@ -47,23 +58,16 @@
 
     <!-- the manual discription when click -->
     <script>
-        const manual = `            <div id="functionality_discription">
-                <h4>Click on Regions to Explore regional features </h4>
-                <h4>Click Restore for Austin Infor as a whole</h4>
-                <h4>Hover over Regions to explore detailed infor </h4>
-                <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
-                <h4>Zoom & Pan on map to inspect certain regions </h4>
-                <h4>Click on Zip Zone for Reigional Specifics</h4>
-            </div>`;
+        const manual = ``;
         document.getElementById("manual_icon").onmouseover = manual_enable;
         document.getElementById("manual_icon").onmouseout = manual_disable;
 
         function manual_disable() {
-            document.getElementById("functionality_discription").remove();
+            document.getElementById("main_mask").classList.remove('show');
         }
 
         function manual_enable() {
-            document.getElementById("main_graph").insertAdjacentHTML('beforeend', manual);
+            document.getElementById("main_mask").classList.add('show');
         }
     </script>
 
