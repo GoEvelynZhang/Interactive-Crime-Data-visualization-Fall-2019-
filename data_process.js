@@ -1,4 +1,6 @@
 function Data() {
+    var weekday;
+    var month;
     var rawData;
     var average = (avg, d, _, {
         length
@@ -148,6 +150,23 @@ function Data() {
         },
         getRawData: function () {
             return rawData;
+        },
+        getGeoCrimeByTime: function(month,weekday){
+            var raw = [];
+            if (month == 0 && weekday == 0){
+                raw = rawData;
+            }
+            if (month == 0 && weekday !=0){
+                raw = rawData.filter(d=>  d['weekday'] == weekday);
+            }
+            if (month != 0 && weekday ==0){
+                raw = rawData.filter(d=> d['month'] == month);
+            }
+            if (month != 0 && weekday !=0){
+            raw = rawData.filter(d=> d['month'] == month && d['weekday'] == weekday);}
+            var ret = [];
+            raw.forEach(d=> ret.push([d["Highest NIBRS/UCR Offense Description"],[parseFloat(d["Longitude"]),parseFloat(d['Latitude'])]]));
+            return ret;
         }
         
 

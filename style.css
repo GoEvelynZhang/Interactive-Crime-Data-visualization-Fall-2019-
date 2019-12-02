@@ -286,3 +286,99 @@ body {
     top: 20px;
     z-index: 100;
 }
+#time_selection{
+  
+    z-index:800;
+    
+    width: 150px;
+    height:200px;
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+   
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    position: relative;
+    left:100px;
+    
+   
+    
+}
+#month_selection{
+    display:inline-block;
+    width:60px;
+    height:25px;
+    position:relative;
+    left:13px;
+    top:-10px;
+}
+#weekday_selection{
+    display:inline-block;
+    position:relative;
+    left:13px;
+    right:5px;
+    width:60px;
+    height:25px;
+    top:-10px;
+}
+
+#weekday{
+    position:relative;
+    top:-20px;
+}
+#month{
+    position:relative;
+    top:-20px;
+}
+.icon_layer{
+    display:inline-block;
+    position:relative;
+    left:15px;
+}
+.icon_describe{
+    position:relative;
+    top:-24px;
+}
+
+.collapsible{
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 165px;
+    height:30px;
+    border: none;
+    text-align: center;
+    z-index:800;
+    font-size: 13px;
+    position:relative;
+    left:100px;
+    border-radius: 5px;
+    
+  
+  }
+  .active, .collapsible:hover {
+    background-color: rgba(0,0,0,1);
+  }
+  .content {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 200px;
+    overflow: hidden;
+    display:none;
+    z-index:800;
+    
+    width: 150px;
+    height:200px;
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+   
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    position: relative;
+    left:100px;
+    
+    transition: max-height 0.3s ease-out;
+  }
+
