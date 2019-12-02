@@ -1,4 +1,4 @@
-# **Crime Visualization in Austin: Towards an interactive pattern recognition**
+# **Crime Visualization in Austin: <br>Towards an interactive pattern recognition**
 *By Hongyi Li & Yuxin Zhang*
 ## 1. Introduction
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Crimes have been long existing to distort social welfare and adding to social anxiety. As hateful as they are, we have not seemed to figure out a general-effective way to identify potential crimes and eradicate them despite the past crime data that we have. However, past data can still be analyzed and learned from as they contain information about possible crimes and can thus infer approaches for police resource distribution and neighborhood building<sup>[1]</sup>. Studies have shown that geographic criminal pattern persists in certain areas<sup>[2]</sup>, and that there exist seasonality patterns in certain crime categories.  
