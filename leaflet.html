@@ -325,17 +325,21 @@
                 })
                 .on("mouseover", function (d) {
                     d3.select(this)
-                        .attr("stroke", "red")
-                        .attr("stroke-width", 3);
+                      .attr("stroke", "red")
+                      .attr("stroke-width", 3);
 
-                    d3.select(".highLight#z" + d.zip).style("stroke", "blue").style("stroke-width", "5");
+                    // d3.select("path#z" + d.zip + ".leaflet-interactive")
+                    //   .attr("weight", 3)
+                    //   .attr("color", "green")
+                    //   .attr("dashArray", '')
+                    //   .attr("fillOpacity", 0.7);
                 })
                 .on("mouseout", function (d) {
                     d3.select(this)
                         .attr("stroke", "rgb(255,255,255)")
                         .attr("stroke-width", 0);
 
-                    d3.select(".highLight#z" + d.zip).style("stroke-width", "0");
+                    // d3.select(".highLight#z" + d.zip).style("stroke-width", "0");
                 })
                 .append("title")
                 .text(function (d) {
@@ -493,7 +497,6 @@
                 }
 
                 function style(feature) {
-                    console.log(feature);
 
                     return {
                         fillColor: getColor(feature.properties.saftyIdx),
@@ -531,7 +534,6 @@
                 function resetHighlight(e) {
                     kyCounties.resetStyle(e.target);
                     info.update();
-
                 }
                 // function for updating view
                 function updateView(view, zip) {
@@ -563,8 +565,6 @@
                         mouseout: resetHighlight,
                         click: zoomToFeature,
                         click: changeZip
-
-
                     });
                 }
 
@@ -572,13 +572,18 @@
                 var kyCounties = L.geoJSON(json, {
                     style: style,
                     onEachFeature: onEachFeature
-
                 }).addTo(map);
+
+                kyCounties.eachLayer(function (layer) {
+                    layer._path.id = "z" + layer.feature.properties.geoid10;
+                });
                 // restore on the restore button click
                 document.getElementById('restore_button').onclick = refresh;
 
                 function refresh() {
                     map.setView([30.304289, -97.724435], 11);
+                    updateView(left_view, 512);
+                    updateView(right_view, 512);
                 }
 
                 var legend = L.control({
@@ -606,10 +611,8 @@
                 };
 
                 legend.addTo(map);
-
-
-
             }
+
             d3.csv("processed_data.csv", function (d) {
                 var data = Data();
                 data.setRawData(d);
