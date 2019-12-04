@@ -283,7 +283,7 @@ body {
     height: 40px;
     position: absolute;
     right:20px;
-    top: 20px;
+    top: 100px;
     z-index: 100;
 }
 #time_selection{
@@ -291,7 +291,7 @@ body {
     z-index:800;
     
     width: 150px;
-    height:200px;
+    height:310px;
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
    
@@ -310,7 +310,7 @@ body {
     height:25px;
     position:relative;
     left:13px;
-    top:-10px;
+    top:-30px;
 }
 #weekday_selection{
     display:inline-block;
@@ -319,7 +319,7 @@ body {
     right:5px;
     width:60px;
     height:25px;
-    top:-10px;
+    top:-30px;
 }
 
 #weekday{
@@ -334,6 +334,7 @@ body {
     display:inline-block;
     position:relative;
     left:15px;
+    top:-30px;
 }
 .icon_describe{
     position:relative;
@@ -360,16 +361,17 @@ body {
   .active, .collapsible:hover {
     background-color: rgba(0,0,0,1);
   }
+  
   .content {
     padding: 0 18px;
     background-color: white;
-    max-height: 200px;
+    max-height: 300px;
     overflow: hidden;
     display:none;
     z-index:800;
     
     width: 150px;
-    height:200px;
+    height:300px;
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
    
@@ -382,3 +384,15 @@ body {
     transition: max-height 0.3s ease-out;
   }
 
+  .layer_selection{
+      /* position:absolute; */
+      z-index:899;
+      position:relative;
+      top:-10px;
+      
+  }
+  #layer_select{
+      position:relative;
+      top:-15px;
+      align-items:center;
+  }
