@@ -4,8 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Interactive Criminal Analysis map</title>
+    <!-- font-awesome declaration -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- import the d3 library  -->
-    <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet"> -->
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
     <script type="text/javascript" src="linechart_closure.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -70,7 +72,8 @@
         <div id="statistics_graph_motion">
             <div id="statistics">
                 <div id="statistical_graph"></div>
-                <div id="selection_zone" class="fa fa-angle-down">
+                <div id="selection_zone" >
+         
                     <select id="select_choice">
                         <option value="clearanceRate">Clearance Rate</option>
                         <option value="clearanceTime">Clearance Time</option>
@@ -90,8 +93,15 @@
         <div id="time_selection" class="content">
              <!-- #layer selection coloring /geo pattern recognition option -->
              <div class="layer_selection">
+           
                  <h5 style = "text-align:center;">Geo Pattern Filter</h5>
-                    <select id="layer_select">
+                               
+              
+  
+                     
+                    <select id="layer_select" >
+                            
+      
                         <option value='' selected>Null</option>
                         <option value='caseNum'>Total case numbers</option>
                         <option value='MurderNum'>Murder Numbers</option>
@@ -104,8 +114,9 @@
     
                         </select>
                 </div>
+              
             <div class ="detailed_record">
-                    <h5 style = "text-align:center;">Crime Record Explore</h5>
+                    <h5 style = "text-align:center;position:relative;top:-10px;">Crime Record Explore</h5>
             
             <div class="time_selection" id="month_selection">
                 
@@ -200,36 +211,27 @@
 
             <div class='dismiss'> Click on background to dimiss and take control of the map</div>
             <div class='dismiss moving' style='bottom:80px; font-size:32px;'>⇪</div>
-            <div class='hint' style='text-align:left;left:110px;bottom:280px;color:white;width:350px;font-size:20px'>
-                This side bar can be initiated and hidden by clicking on the arrow.
-                This side bar contains the criminal categorical statitstics and time seris pattern analytics for each
-                zip section.
+            <div class='hint' style='text-align:left;left:110px;bottom:250px;color:white;width:350px;font-size:20px'>Click to initiate the side bar. <br> Initiated and hidden by clicking . <br> Click on a region to check regional crime statistics by category and by time (seasonality).
             </div>
             <img class='arrow' src='./arrow.png'
-                style='left: 60px; bottom: 350px;transform: scaleY(-1); width: 50px; height: 100px;'>
-            <div class='hint' style='text-align: left;right:120px;bottom:420px;color:white;width:350px;font-size:20px'>
-                This side bar can be initiated and hidden by clicking on the arrow.
-                This side bar contains crime and clearance specific rankings of all zip sections.
+                style='left: 30px; bottom: 350px;transform: scaleY(-1); width: 50px; height: 100px;'>
+            <div class='hint' style='right:120px;bottom:420px;color:white;width:350px;font-size:20px'>Click to initiate the side bar. <br>Select measurement to compare and rank zip sections.
             </div>
             <img class='arrow' src='./arrow.png'
-                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1);right: 60px; bottom: 360px; width: 50px; height: 100px;'>
+                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1);right: 30px; bottom: 360px; width: 50px; height: 100px;'>
 
-            <div class='hint' style='text-align: left;right:120px;bottom:120px;color:white;width:350px;font-size:20px'>
-                Click the restore button to retain the original view
+            <div class='hint' style='right:120px;bottom:120px;color:white;width:350px;font-size:20px'>Click the restore button to retain the original view
 
             </div>
             <img class='arrow' src='./arrow.png'
                 style=' -webkit-transform: scaleX(-1);transform: scaleX(-1);transform: rotate(80);right: 60px; bottom: 60px; width: 50px; height: 100px;'>
-            <div class='hint' style='text-align: left;right:120px;top:70px;color:white;width:350px;font-size:20px'>
-                Click the Manual to refer to the functionality description
+            <div class='hint' style='right:90px;top:110px;color:white;width:350px;font-size:20px'>Click the Manual to refer to the functionality description
 
             </div>
             <img class='arrow' src='./arrow.png'
-                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1) scaleY(-1) ;right: 30px; top: 20px; width: 50px; height: 100px;'>
+                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1) scaleY(-1) ;right: 30px; top: 50px; width: 50px; height: 100px;'>
 
-            <div class='hint' style='text-align: left;left:320px;top:130px;color:white;width:350px;font-size:20px'>
-                Enable the self-exploring bar and explore the detailed criminal(location and category) record by zooming
-                on the map
+            <div class='hint' style='left:320px;top:130px;color:white;width:350px;font-size:20px'>Enable crime exploration in detail by clicking <br> Select filter and Check Geographical Pattern<br> Select Month/Weekday, Zoom and Explore the detailed criminal records<br>Safty Index is weighted by severity of each crime category
 
             </div>
             <img class='arrow' src='./arrow.png'
@@ -704,7 +706,7 @@
 
                     layer.setStyle({
                         weight: 3,
-                        color: 'darkblue',
+                        color: '#357EC7',
                         dashArray: '',
                         fillOpacity: 0.7
                     });
