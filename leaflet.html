@@ -4,32 +4,48 @@
 <head>
     <meta charset="utf-8" />
     <title>Interactive Criminal Analysis map</title>
-    <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+    <!-- font-awesome declaration -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- import the d3 library  -->
+    <!-- <link href="https://cdn.bootcss.com/font-awesome/5.11.2/css/all.min.css" rel="stylesheet"> -->
     <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
-    <script type="text/javascript" src="data_process.js"></script>
-    <script type="text/javascript" src="barchart_closure.js"></script>
     <script type="text/javascript" src="linechart_closure.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.13.0/d3-legend.js"></script>
+    <!-- import the data-processing closure -->
+    <script type="text/javascript" src="data_process.js"></script>
+    <script type="text/javascript" src="barchart_closure.js"></script>
 
 
 
+    <!-- import the leaflet package -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
         crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+        integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"
+        integrity="sha512-WXoSHqw/t26DszhdMhOXOkI7qCiv5QWXhH9R7CgvgZMHz1ImlkVQ3uNsiQKu5wwbbxtPzFXd1hK4tzno2VqhpA=="
+        crossorigin=""></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- import the package for the MarketClusters -->
+    <link rel="stylesheet" href="/MarkerCluster.css" />
+    <link rel="stylesheet" href="/MarkerCluster.Default.css" />
+    <script src="/leaflet.markercluster-src.js"></script>
+    <!-- import the jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
 
     <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <!-- import the CSS file -->
     <link rel="stylesheet" href="style.css">
 
-    <style>
-
-    </style>
+    <!-- style are imported from the external CSS file -->
 </head>
 
 <body>
@@ -56,7 +72,8 @@
         <div id="statistics_graph_motion">
             <div id="statistics">
                 <div id="statistical_graph"></div>
-                <div id="selection_zone" class="fa fa-angle-down">
+                <div id="selection_zone" >
+         
                     <select id="select_choice">
                         <option value="clearanceRate">Clearance Rate</option>
                         <option value="clearanceTime">Clearance Time</option>
@@ -71,58 +88,227 @@
         <span id="restore">
             <button id="restore_button" type="button">Restore</button>
         </span>
-        <div class="main_mask" id = "main_mask">
-            <!-- <div id="functionality_discription">
-                <h4>Click on Regions to Explore regional features </h4>
-                <h4>Click Restore for Austin Infor as a whole</h4>
-                <h4>Hover over Regions to explore detailed infor </h4>
-                <h4>Click on Regions to Explore crime category, seasonailty pattern</h4>
-                <h4>Zoom & Pan on map to inspect certain regions </h4>
-                <h4>Click on Zip Zone for Reigional Specifics</h4>
-            </div> -->
-            <div class = 'dismiss'> Click on background to dimiss and take control of the map</div>
-            <div class = 'dismiss moving' style = 'bottom:80px; font-size:32px;'>⇪</div>
-            <div class = 'hint' style = 'text-align:left;left:120px;bottom:420px;color:white;width:350px;font-size:20px'>
-            This side bar can be initiated and hidden by clicking on the arrow.
-            This side bar contains the criminal categorical statitstics and time seris pattern analytics for each zip section.
+        <!-- collasible exploring function bar -->
+        <button type="button" class="collapsible">Crime Exploring</button>
+        <div id="time_selection" class="content">
+             <!-- #layer selection coloring /geo pattern recognition option -->
+             <div class="layer_selection">
+           
+                 <h5 style = "text-align:center;">Geo Pattern Filter</h5>
+                               
+              
+  
+                     
+                    <select id="layer_select" >
+                            
+      
+                        <option value='' selected>Null</option>
+                        <option value='caseNum'>Total case numbers</option>
+                        <option value='MurderNum'>Murder Numbers</option>
+                        <option value='AssaultNum'>Assault Numbers</option>
+                        <option value='BurglaryNum'>Burgary Numbers</option>
+                        <option value='TheftNum'>Theft Numbers</option>
+                        <option value='RobberyNum'>Robbery Numbers</option>
+                        <option value='AutoTheftNum'>Car-Theft Numbers</option>
+                        <option value='saftyIdx'>Safty Index</option>
+    
+                        </select>
+                </div>
+              
+            <div class ="detailed_record">
+                    <h5 style = "text-align:center;position:relative;top:-10px;">Crime Record Explore</h5>
+            
+            <div class="time_selection" id="month_selection">
+                
+                <h6>Month</h6>
+                <select id="month">
+
+                    <option value='0' selected>All</option>
+                    <option value='1'>Jan</option>
+                    <option value='2'>Feb</option>
+                    <option value='3'>Mar</option>
+                    <option value='4'>Apr</option>
+                    <option value='5'>May</option>
+                    <option value='6'>Jun</option>
+                    <option value='7'>Jul</option>
+                    <option value='8'>Aug</option>
+                    <option value='9'>Sep</option>
+                    <option value='10'>Oct</option>
+                    <option value='11'>Nov</option>
+                    <option value='12'>Dec</option>
+
+                </select>
             </div>
-            <img class = 'arrow' src = './arrow.png' style ='left: 60px; bottom: 360px; width: 50px; height: 100px;'>
-            <div class = 'hint' style = 'text-align: left;right:120px;bottom:420px;color:white;width:350px;font-size:20px'>
-                    This side bar can be initiated and hidden by clicking on the arrow.
-                    This side bar contains crime and clearance specific rankings of all zip sections.
+            <div class="time_selection" id="weekday_selection">
+                <h6>Weekday</h6>
+                <select id="weekday">
+
+                    <option value='0' selected>All</option>
+                    <option value='1'>Mon</option>
+                    <option value='2'>Tue</option>
+                    <option value='3'>Wed</option>
+                    <option value='4'>Thu</option>
+                    <option value='5'>Fri</option>
+                    <option value='6'>Sat</option>
+                    <option value='7'>Sun</option>
+                </select>
+            </div>
+            <div class="icon_description">
+                <div class="icon_layer">
+                    <div id='murderIcon'>
+                        <img src="murder.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Murder</h6>
+                        </span>
                     </div>
-             <img class = 'arrow' src = './arrow.png' style =' -webkit-transform: scaleX(-1);transform: scaleX(-1);right: 60px; bottom: 360px; width: 50px; height: 100px;'>
-        
-             <div class = 'hint' style = 'text-align: left;right:120px;bottom:120px;color:white;width:350px;font-size:20px'>
-                    Click the restore button to retain the original view
-                    
+                    <div id='theftIcon' style="position:relative;top:-20px;">
+                        <img src="theft.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Theft</h6>
+                        </span>
                     </div>
-             <img class = 'arrow' src = './arrow.png' style =' -webkit-transform: scaleX(-1);transform: scaleX(-1);transform: rotate(80);right: 60px; bottom: 60px; width: 50px; height: 100px;'>
-             <div class = 'hint' style = 'text-align: left;right:120px;top:70px;color:white;width:350px;font-size:20px'>
-                    Click the Manual to refer to the functionality description
-                    
+                </div>
+                <div class='icon_layer'>
+                    <div id='assaultIcon'>
+                        <img src="assault.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Assault</h6>
+                        </span>
                     </div>
-             <img class = 'arrow' src = './arrow.png' style =' -webkit-transform: scaleX(-1);transform: scaleX(-1) scaleY(-1) ;right: 30px; top: 20px; width: 50px; height: 100px;'>
-        
+
+
+                    <div id='robberyIcon' style="position:relative;top:-20px;">
+                        <img src="robbery.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Robbery</h6>
+                        </span>
+                    </div>
+                </div>
+                <div class='icon_layer'>
+                    <div id='burgalryIcon'>
+                        <img src="burgalry.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Burgalry</h6>
+                        </span>
+                    </div>
+                    <div id='carTheftIcon' style="position:relative;top:-20px;">
+                        <img src="car-theft.png" alt="Italian Trulli" style='width:30px;height:30px;'>
+                        <span class="icon_describe">
+                            <h6>Car-Theft</h6>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+           
+        </div>
+      
+       
+            
+      
+        <!-- #adding the main mask which describes the functionality and act as the manul for reference -->
+        <div class="main_mask" id="main_mask">
+
+            <div class='dismiss'> Click on background to dimiss and take control of the map</div>
+            <div class='dismiss moving' style='bottom:80px; font-size:32px;'>⇪</div>
+            <div class='hint' style='text-align:left;left:110px;bottom:250px;color:white;width:350px;font-size:20px'>Click to initiate the side bar. <br> Initiated and hidden by clicking . <br> Click on a region to check regional crime statistics by category and by time (seasonality).
+            </div>
+            <img class='arrow' src='./arrow.png'
+                style='left: 30px; bottom: 350px;transform: scaleY(-1); width: 50px; height: 100px;'>
+            <div class='hint' style='right:120px;bottom:420px;color:white;width:350px;font-size:20px'>Click to initiate the side bar. <br>Select measurement to compare and rank zip sections.
+            </div>
+            <img class='arrow' src='./arrow.png'
+                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1);right: 30px; bottom: 360px; width: 50px; height: 100px;'>
+
+            <div class='hint' style='right:120px;bottom:120px;color:white;width:350px;font-size:20px'>Click the restore button to retain the original view
+
+            </div>
+            <img class='arrow' src='./arrow.png'
+                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1);transform: rotate(80);right: 60px; bottom: 60px; width: 50px; height: 100px;'>
+            <div class='hint' style='right:90px;top:110px;color:white;width:350px;font-size:20px'>Click the Manual to refer to the functionality description
+
+            </div>
+            <img class='arrow' src='./arrow.png'
+                style=' -webkit-transform: scaleX(-1);transform: scaleX(-1) scaleY(-1) ;right: 30px; top: 50px; width: 50px; height: 100px;'>
+
+            <div class='hint' style='left:320px;top:130px;color:white;width:350px;font-size:20px'>Enable crime exploration in detail by clicking <br> Select filter and Check Geographical Pattern<br> Select Month/Weekday, Zoom and Explore the detailed criminal records<br>Safty Index is weighted by severity of each crime category
+
+            </div>
+            <img class='arrow' src='./arrow.png'
+                style=' -webkit-transform: scaleX(-1);transform:  scaleY(-1) ;left: 150px; top: 110px; width: 50px; height: 100px;'>
 
         </div>
     </div>
-    <!-- the manual discription when click -->
+
+
     <script>
+        // ##setup the icons for the market
+        var murderIcon = L.icon({
+            iconUrl: 'murder.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var assaultIcon = L.icon({
+            iconUrl: 'assault.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var robberyIcon = L.icon({
+            iconUrl: 'robbery.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var burgalryIcon = L.icon({
+            iconUrl: 'burgalry.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var carTheftIcon = L.icon({
+            iconUrl: 'car-theft.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var theftIcon = L.icon({
+            iconUrl: 'theft.png',
+
+            iconSize: [50, 50],
+            iconAnchor: [22, 94],
+            popupAnchor: [-3, -76]
+        });
+        var crime_icon_reference = {
+            'Agg Assault': assaultIcon,
+            'Auto Theft': carTheftIcon,
+            'Burglary': burgalryIcon,
+            'Murder': murderIcon,
+            'Robbery': robberyIcon,
+            'Theft': theftIcon
+        }
+        // <!-- the manual discription when click -->
+
         document.getElementById("main_mask").onclick = manual_disable;
-        
-            const manual = ``;
-            document.getElementById("manual_icon").onclick= manual_enable;
-            // document.getElementById("manual_icon").onmouseout = manual_disable;
-    
-            function manual_disable() {
-                document.getElementById("main_mask").style.display="None";
-            }
-    
-            function manual_enable() {
-                document.getElementById("main_mask").style.display="block";
-            }
-        </script>
+
+        const manual = ``;
+        document.getElementById("manual_icon").onclick = manual_enable;
+        // document.getElementById("manual_icon").onmouseout = manual_disable;
+
+        function manual_disable() {
+            document.getElementById("main_mask").style.display = "None";
+        }
+
+        function manual_enable() {
+            document.getElementById("main_mask").style.display = "block";
+        }
+    </script>
 
     <script>
         // initiate the sidebar
@@ -423,26 +609,16 @@
                     maxZoom: 19
                 }).addTo(map);
 
+            var markers = L.markerClusterGroup();
 
-            // adding the lati and logi pop up
-            // var popup = L.popup();
-
-            // function onMapClick(e) {
-            //     popup
-            //         .setLatLng(e.latlng)
-            //         .setContent("You clicked the map at " + e.latlng.toString())
-            //         .openOn(map);
-            // };
-
-            // map.on("click", onMapClick);
-
-            // ##bind the data and create the color for the safetyIndex
             function draw(data, json) {
 
                 window.data = data;
                 window.json = json
                 window.d3 = d3;
                 var zip_section = data.getAllZipData();
+                var zip_category_statistics = data.getAllCrimeDataByZip();
+                // console.log(zip_category_statistics);
 
                 // bind each zip section with the safty index
 
@@ -459,6 +635,22 @@
                                 2);
                         }
                     })
+                    // add in the other properties : all the statsitics of each crime category by zip zone
+                    json.features[i].properties.AssaultNum = zip_category_statistics[json_zip][
+                        'Agg Assault'
+                    ];
+                    json.features[i].properties.MurderNum = zip_category_statistics[json_zip]['Murder'];
+                    json.features[i].properties.AutoTheftNum = zip_category_statistics[json_zip][
+                        'Auto Theft'
+                    ];
+                    json.features[i].properties.BurglaryNum = zip_category_statistics[json_zip][
+                        'Burglary'
+                    ];
+                    json.features[i].properties.RobberyNum = zip_category_statistics[json_zip][
+                        'Robbery'
+                    ];
+                    json.features[i].properties.TheftNum = zip_category_statistics[json_zip]['Theft'];
+                    json.features[i].properties.InitNum = -1;
 
                 })
                 // adding to the popup infor session
@@ -493,19 +685,22 @@
                         d > 50 ? '#FD8D3C' :
                         d > 20 ? '#FEB24C' :
                         d > 10 ? '#FED976' :
-                        '#FFEDA0';
+                        d > -1 ? '#FFEDA0':
+                            '#B7CEEC';
                 }
 
                 function style(feature) {
+                    // console.log(feature);
 
                     return {
-                        fillColor: getColor(feature.properties.saftyIdx),
+                        fillColor: getColor(feature.properties.Init),
                         weight: 2,
                         opacity: 1,
                         color: 'white',
                         dashArray: '3',
                         fillOpacity: 0.5
                     };
+                    
                 }
 
 
@@ -515,7 +710,7 @@
 
                     layer.setStyle({
                         weight: 3,
-                        color: 'green',
+                        color: '#357EC7',
                         dashArray: '',
                         fillOpacity: 0.7
                     });
@@ -532,7 +727,14 @@
                 var kyCounties;
                 // define the mouseout highlight change
                 function resetHighlight(e) {
-                    kyCounties.resetStyle(e.target);
+                    var layer = e.target;
+                    layer.setStyle({
+                        weight: 2,
+                        opacity: 1,
+                        color: 'white',
+                        dashArray: '3',
+                        fillOpacity: 0.5
+                    });
                     info.update();
                 }
                 // function for updating view
@@ -572,11 +774,9 @@
                 var kyCounties = L.geoJSON(json, {
                     style: style,
                     onEachFeature: onEachFeature
-                }).addTo(map);
 
-                kyCounties.eachLayer(function (layer) {
-                    layer._path.id = "z" + layer.feature.properties.geoid10;
                 });
+                kyCounties.addTo(map);
                 // restore on the restore button click
                 document.getElementById('restore_button').onclick = refresh;
 
@@ -608,19 +808,109 @@
 
                     div.innerHTML = labels.join('<br>');
                     return div;
-                };
+                }
+                legend.on;
+                // mapping layer selection and legend disply
+                function initiate_mapping_layer() {
+                    
+                    document.getElementById('layer_select').onchange = update_layer;
 
-                legend.addTo(map);
+                    function update_layer() {
+                        
+                        var by_category = document.getElementById('layer_select').value;
+                        if (by_category == ''){
+                            map.removeControl(legend);}
+                            else{
+                                legend.addTo(map);
+                            }
+                        console.log(by_category);
+
+                        kyCounties.eachLayer(function (layer) {
+                            // console.log(layer['feature']['properties'][by_category]);
+                            layer.setStyle({
+                                fillColor: getColor(layer['feature']['properties'][by_category])
+
+
+                            })
+                            // console.log(getColor(layer['feature']['properties'][by_category]));
+                            // layer['options']['fillColor'] = getColor(layer['feature']['properties'][by_category]);
+                            // // [by_category]);
+
+
+                        })
+                        // if (){
+                        //     map.remove(legend);
+                        // }
+                    }
+                    
+
+
+                };
+                initiate_mapping_layer()
+
+
+                // draw the initial crime exploration map
+                function draw_each_crime(GeoCrimeArray) {
+
+                    // add a circle for each of the crime
+                    for (var i = 0; i < GeoCrimeArray.length; i++) {
+                        // var marker = L.marker([GeoCrimeArray[i][1][1], GeoCrimeArray[i][1][0]])
+                        //     // .bindPopup(GeoCrimeArray[i][0])
+                        //     .addTo(map);
+                        var m = L.marker([GeoCrimeArray[i][1][1], GeoCrimeArray[i][1][0]], {
+                            icon: crime_icon_reference[GeoCrimeArray[i][0]]
+                        });
+                        markers.addLayer(m);
+                    }
+                    map.addLayer(markers);
+
+                }
+                // <!-- enable the collapse and unflod of the function bar -->
+                var coll = document.getElementsByClassName("collapsible");
+
+
+                for (var i = 0; i < coll.length; i++) {
+                    coll[i].addEventListener("click", function () {
+                        this.classList.toggle("active");
+                        var content = this.nextElementSibling;
+                        if (content.style.display === "block") {
+                            map.removeLayer(markers);
+                            content.style.display = "none";
+                        } else {
+                            content.style.display = "block";
+                        }
+                    });
+                }
+                // second collapsible bar
+               
+
+
+                // #update of the markers
+                document.getElementById('month').onchange = update_markers;
+                document.getElementById('weekday').onchange = update_markers;
+
+                function update_markers() {
+                    var month = parseInt(document.getElementById('month').value);
+                    var weekday = parseInt(document.getElementById('weekday').value);
+
+                    draw_each_crime(data.getGeoCrimeByTime(month, weekday));
+                }
+
+
+
+
             }
 
             d3.csv("processed_data.csv", function (d) {
                 var data = Data();
                 data.setRawData(d);
+                // console.log(data.getGeoCrimeByTime(1,2));
                 var saftyIdx = Object.values(data.getAllSafetyIdx());
                 // color.domain([Math.min.apply(null, saftyIdx), Math.max.apply(null, saftyIdx)]);
                 d3.json("Boundaries_Zip.geojson", function (json) {
                     draw(data, json);
                 });
+
             });
 
 

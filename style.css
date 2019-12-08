@@ -54,7 +54,7 @@ body {
 
 .legend i {
     width: 18px;
-    height: 18px;
+    height: 17px;
     float: left;
     margin-right: 8px;
     opacity: 0.7;
@@ -69,8 +69,8 @@ body {
     z-index: 999;
     position: fixed;
 
-    height: 879px;
-    top: 60px;
+    height: 850px;
+    top: 150px;
     width: 350px;
 
     background: white;
@@ -90,21 +90,24 @@ body {
     width: 20px;
     height: 35px;
     right: 0px;
-    top: 300px;
+    top: 360px;
     position: absolute;
     cursor: pointer;
 }
 
 
 #sub_bar_indicator::after {
-    content: '>';
+    /* content: '>'; */
+    content: "\f054";  /* this is your text. You can also use UTF-8 character codes as I do here */
+    font-family: FontAwesome;
     width: 20px;
     display: block;
     text-align: center;
 }
 
 #sub_bar_motion.show #sub_bar_indicator::after {
-    content: '<';
+    content: '\f053';
+    font-family: FontAwesome;
 }
 
 
@@ -112,8 +115,8 @@ body {
     z-index: 999;
     position: fixed;
     right: -520px;
-    height: 879px;
-    top: 60px;
+    height: 850px;
+    top: 150px;
     width: 540px;
     border-right: 1px solid;
 
@@ -133,7 +136,7 @@ body {
 
 
     position:absolute;
-    top:30px;
+    top:80px;
     height: 600px;
     width: 520px;
     overflow: auto;
@@ -147,21 +150,23 @@ body {
     width: 20px;
     height: 35px;
     left: 0px;
-    top: 300px;
+    top: 360px;
     position: absolute;
     cursor: pointer;
 }
 
 
 #sub_bar_indicator2::after {
-    content: '<';
+    content: '\f053';
+    font-family: FontAwesome;
     width: 20px;
     display: block;
     text-align: center;
 }
 
 #statistics_graph_motion.show #sub_bar_indicator2::after {
-    content: '>';
+    content: '\f054';
+    font-family: FontAwesome;
 }
 
 #selection_zone {
@@ -171,22 +176,19 @@ body {
 
 
 #selection_zone::before {
-    content: "";
-    font-family: 'Font Awesome 5 Free';
+    content: '\f078';
+    font-family: FontAwesome;
+    width: 110px;
+    height: 55px;
+    left: 220px;
+    top: 734px;
+    z-index: 1;
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 20%;
-    height: 100%;
-    text-align: center;
-    font-size: 28px;
-    line-height: 45px;
-    color: rgba(255, 255, 255, 0.5);
-    background-color: rgba(255, 255, 255, 0.1);
-    pointer-events: none;
+    cursor: pointer;
+
 }
 
-#selection_zone:hover::before {
+#selection_zone:hover {
     color: rgba(255, 255, 255, 0.6);
     background-color: rgba(255, 255, 255, 0.2);
 }
@@ -197,7 +199,7 @@ body {
     padding: 12px;
     width: 250px;
     position:absolute;
-    top:660px;
+    top:720px;
     border: none;
     font-size: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -231,7 +233,7 @@ body {
 .main_mask {
     position: fixed;
     display: block;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 1000;
     left: 0; top: 0;
     width: 100%; height: 100%;
@@ -272,6 +274,7 @@ body {
     white-space: pre-wrap;
     font-size: 14px;
     position: absolute;
+    text-align:left;
   }
   
   .arrow {
@@ -284,5 +287,143 @@ body {
     position: absolute;
     right:20px;
     top: 20px;
-    z-index: 100;
+    z-index: 1999;
 }
+#time_selection{
+  
+    z-index:800;
+    
+    width: 150px;
+    height:310px;
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+   
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    position: relative;
+    left:100px;
+   
+    
+   
+    
+}
+#month_selection{
+    display:inline-block;
+    width:60px;
+    height:25px;
+    position:relative;
+    left:13px;
+    top:-45px;
+}
+#weekday_selection{
+    display:inline-block;
+    position:relative;
+    left:13px;
+    right:5px;
+    width:60px;
+    height:25px;
+    top:-45px;
+}
+
+#weekday{
+    position:relative;
+    top:-20px;
+}
+#month{
+    position:relative;
+    top:-20px;
+}
+.icon_layer{
+    display:inline-block;
+    position:relative;
+    left:11px;
+    top:-45px;
+}
+.icon_describe{
+    position:relative;
+    top:-24px;
+}
+
+.collapsible{
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 165px;
+    height:30px;
+    border: none;
+    text-align: center;
+    z-index:800;
+    font-size: 13px;
+    position:relative;
+    left:100px;
+    border-radius: 5px;
+    
+  
+  }
+  .active, .collapsible:hover {
+    background-color: rgba(0,0,0,1);
+  }
+  
+  .content {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 300px;
+    overflow: hidden;
+    display:none;
+    z-index:800;
+    
+    width: 150px;
+    height:300px;
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+   
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    position: relative;
+    left:100px;
+    
+    transition: max-height 0.3s ease-out;
+  }
+
+  .layer_selection{
+      /* position:absolute; */
+      z-index:899;
+      position:relative;
+      top:-10px;
+      
+  }
+  #layer_select{
+      position:relative;
+      top:-15px;
+      align-items:center;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    height:56px;
+    position:relative;
+    left:100px;
+    /* top:-150px; */
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 999;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  
+  }
